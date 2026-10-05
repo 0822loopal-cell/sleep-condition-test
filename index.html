@@ -24,7 +24,13 @@
       </section>
       <section class="card data-card" aria-labelledby="data-title"><div class="data-heading"><div class="data-title-wrap"><div class="data-card-icon icon-chart" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="4" height="9" rx="1"/><rect x="10" y="6" width="4" height="14" rx="1"/><rect x="17" y="3" width="4" height="17" rx="1"/></svg></div><div><h2 id="data-title">わたしのデータ</h2></div></div></div>
         <div class="data-row"><div><span class="data-number" id="saved-count">0</span><span class="data-unit">件</span><p>保存済み記録</p><p class="helper">うちrPPG有効：<span id="valid-count">0</span>件</p></div><p class="data-message">記録を重ねると、<br>あなた比が見えてきます。</p></div>
-      </section>
+      </section><section id="weekly-notice" class="card data-card" hidden>
+  <p class="section-label">WEEKLY</p>
+  <h2>今週の振り返りができました</h2>
+  <p class="body-copy">この1週間の記録を振り返ってみましょう。記録のない日は推測で補っていません。</p>
+  <button id="weekly-notice-open" class="primary-button" type="button">週間サマリーを見る <span aria-hidden="true">›</span></button>
+  <button id="weekly-notice-later" class="secondary-button" type="button">あとで見る</button>
+</section>
       <section id="isolated-preview" class="card data-card" hidden><p class="section-label">TEST ONLY</p><h2>架空データでTODAYを確認</h2><p class="helper">保存記録は変更しません。架空の過去7日・14日と今朝の測定値を使います。</p><button id="preview-7" class="secondary-button" type="button">7日分でTODAYを表示</button><button id="preview-14" class="secondary-button" type="button">14日分でTODAYを表示</button></section>
       <section id="isolated-backup" class="card data-card"><h2>記録のバックアップ・復元</h2><p class="helper">現在開いているモードの記録だけを扱います。書き出したファイルには体調などの個人情報が含まれます。第三者に共有しないでください。</p><button id="test-export" class="secondary-button" type="button">記録を書き出す</button><label for="test-import-file">記録のファイルを選ぶ</label><input id="test-import-file" type="file" accept=".json,application/json"><button id="test-import" class="secondary-button" type="button">選択ファイルを確認する</button><p id="test-backup-status" class="helper" aria-live="polite"></p></section>
       <section id="isolated-save-failure" class="card data-card" hidden><p class="section-label">TEST ONLY</p><h2>保存エラー検証</h2><p class="helper">次の保存操作を1回だけ失敗させます。既存の記録は変更しません。</p><button id="arm-save-failure" class="secondary-button" type="button">次の保存を失敗させる</button><p id="save-failure-arm-status" class="helper" aria-live="polite">未設定</p></section>
@@ -161,7 +167,7 @@
   </main>
 
   <nav class="bottom-nav" id="bottom-nav" aria-label="メインナビゲーション">
-    <button id="nav-today" class="nav-item active" type="button" aria-current="page"><span>☀︎</span>今日</button><button id="nav-history" class="nav-item" type="button"><span>⌁</span>履歴
+    <button id="nav-today" class="nav-item active" type="button" aria-current="page"><span>☀︎</span>今日</button><button id="nav-history" class="nav-item" type="button"><span>⌁</span>履歴</button>
   </nav>
 
 <script>
@@ -169,7 +175,7 @@ const d=new Date(),w=["日","月","火","水","木","金","土"];
 document.getElementById("today-date").textContent=`${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${w[d.getDay()]}）`;
 const home=document.getElementById("home-screen"),step1=document.getElementById("step1-screen"),step2=document.getElementById("step2-screen"),step3=document.getElementById("step3-screen"),step4=document.getElementById("step4-screen"),todayScreen=document.getElementById("today-screen"),nav=document.getElementById("bottom-nav");
 function showStep1(){home.classList.remove("active");step1.classList.add("active");nav.hidden=true;window.scrollTo(0,0)}
-function showHome(){window.stopRppgCamera?.();step1.classList.remove("active");step2.classList.remove("active");step3.classList.remove("active");step4.classList.remove("active");todayScreen.classList.remove("active");home.classList.add("active");nav.hidden=false;window.scrollTo(0,0)}
+function showHome(){updateWeeklyNotice();window.stopRppgCamera?.();step1.classList.remove("active");step2.classList.remove("active");step3.classList.remove("active");step4.classList.remove("active");todayScreen.classList.remove("active");home.classList.add("active");nav.hidden=false;window.scrollTo(0,0)}
 function showStep2(){step1.classList.remove("active");step2.classList.add("active");window.scrollTo(0,0)}
 function backToStep1(){step2.classList.remove("active");step1.classList.add("active");window.scrollTo(0,0)}
 function showStep3(){step2.classList.remove("active");step3.classList.add("active");window.scrollTo(0,0)}
@@ -402,6 +408,7 @@ function finishToday(){
   localStorage.setItem(STORAGE_KEY,JSON.stringify(records));
   if(!savedRecords().some(x=>x.id===entry.id))throw Error("保存確認失敗");
  }catch(e){alert("記録を保存できませんでした。入力内容はこの画面に残っています。もう一度保存してください。再度失敗する場合は、画面を閉じずにお知らせください。");return}
+ updateWeeklyNotice();
  document.getElementById("saved-count").textContent=savedRecords().length;
  document.getElementById("valid-count").textContent=savedRecords().filter(x=>x.rppg?.status==="valid").length;
  document.getElementById("start-record").textContent="今日の結果を見る";
@@ -418,7 +425,41 @@ function showHistory(){
  else box.innerHTML=records.map(x=>{const m=x.morning?.condition||"未記録",s=x.sleep?.feeling||"未記録",r=x.rppg?.status==="valid"?`HR ${Math.round(x.rppg.hr)} / RMSSD ${Math.round(x.rppg.rmssd)} / SDNN ${Math.round(x.rppg.sdnn)}`:"測定なし・参考値";return `<div style="padding:12px 0;border-bottom:1px solid #eee"><strong>${formatRecordDate(x.recordedAt)}</strong><p class="today-copy">睡眠：${s}<br>今朝：${m}<br>カメラ：${r}</p></div>`}).join("");
  window.scrollTo(0,0);
 }
-function weeklyData(){
+const WEEKLY_NOTICE_KEY=STORAGE_KEY+"__weeklyNotice";
+
+function weeklyNoticeState(){
+ const records=[...savedRecords()]
+  .filter(x=>Number.isFinite(Date.parse(x.recordedAt)))
+  .sort((a,b)=>Date.parse(a.recordedAt)-Date.parse(b.recordedAt));
+
+ if(!records.length)return {due:false};
+
+ const first=new Date(records[0].recordedAt);
+ const firstDay=new Date(first.getFullYear(),first.getMonth(),first.getDate()).getTime();
+ const today=new Date();
+ const todayDay=new Date(today.getFullYear(),today.getMonth(),today.getDate()).getTime();
+ const days=Math.floor((todayDay-firstDay)/86400000);
+
+ if(days<7)return {due:false};
+
+ const period=Math.floor(days/7);
+ const periodKey=firstDay+"-"+period;
+ const checked=localStorage.getItem(WEEKLY_NOTICE_KEY)===periodKey;
+
+ return {due:!checked,periodKey};
+}
+
+function updateWeeklyNotice(){
+ const notice=document.getElementById("weekly-notice");
+ const state=weeklyNoticeState();
+ notice.hidden=!state.due;
+}
+
+function markWeeklyNoticeChecked(){
+ const state=weeklyNoticeState();
+ if(state.periodKey)localStorage.setItem(WEEKLY_NOTICE_KEY,state.periodKey);
+ document.getElementById("weekly-notice").hidden=true;
+}function weeklyData(){
  const now=Date.now(),cut=now-7*86400000;
  return savedRecords().filter(x=>{const t=Date.parse(x.recordedAt);return Number.isFinite(t)&&t>=cut&&t<=now}).sort((a,b)=>Date.parse(a.recordedAt)-Date.parse(b.recordedAt));
 }
@@ -436,16 +477,25 @@ function weeklySummaryText(){
  return {record,life,camera,insight,next};
 }
 function renderWeekly(){const x=weeklySummaryText();document.getElementById("weekly-record").textContent=x.record;document.getElementById("weekly-life").textContent=x.life;document.getElementById("weekly-camera").textContent=x.camera;document.getElementById("weekly-insight").textContent=x.insight;document.getElementById("weekly-next").textContent=x.next}
-function showWeekly(){hideMainScreens();document.getElementById("weekly-screen").classList.add("active");nav.hidden=false;renderWeekly();window.scrollTo(0,0)}
+function showWeekly(){
+ hideMainScreens();
+ document.getElementById("weekly-screen").classList.add("active");
+ nav.hidden=false;
+ renderWeekly();
+ markWeeklyNoticeChecked();
+ window.scrollTo(0,0);
+}
 function weeklyShareText(){const x=weeklySummaryText();return ["朝のコンディション｜週間サマリー","① 記録状況\n"+x.record,"② 生活と体感の推移\n"+x.life,"③ カメラ測定値\n"+x.camera,"④ 今週の気づき\n"+x.insight,"⑤ 来週の過ごし方\n"+x.next].join("\n\n")}
 async function shareWeekly(){const text=weeklyShareText(),status=document.getElementById("share-weekly-status");try{if(navigator.share){await navigator.share({title:"朝のコンディション｜週間サマリー",text});status.textContent="共有先の選択は端末側で行います。"}else if(navigator.clipboard){await navigator.clipboard.writeText(text);status.textContent="サマリーをコピーしました。メールやLINEに貼り付けて共有できます。"}else{status.textContent="この環境では共有機能を利用できません。"}}catch(e){if(e?.name!=="AbortError")status.textContent="共有を開始できませんでした。もう一度お試しください。"}}
-document.getElementById("nav-history").addEventListener("click",showHistory);
+document.getElementById("weekly-notice-open").addEventListener("click",showWeekly);
+document.getElementById("weekly-notice-later").addEventListener("click",()=>{document.getElementById("weekly-notice").hidden=true;});document.getElementById("nav-history").addEventListener("click",showHistory);
 document.getElementById("nav-today").addEventListener("click",showHome);
 document.getElementById("back-history").addEventListener("click",showHome);
 document.getElementById("open-weekly").addEventListener("click",showWeekly);
 document.getElementById("back-weekly").addEventListener("click",showHistory);
 document.getElementById("share-weekly").addEventListener("click",shareWeekly);
 document.getElementById("finish-today").addEventListener("click",finishToday);
+updateWeeklyNotice();
 document.getElementById("saved-count").textContent=savedRecords().length;
  document.getElementById("valid-count").textContent=savedRecords().filter(x=>x.rppg?.status==="valid").length;
 if(IS_ISOLATED_TEST){
