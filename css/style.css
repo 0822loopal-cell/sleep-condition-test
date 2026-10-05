@@ -1,0 +1,487 @@
+:root{
+  --ink:#25353b; --muted:#718086; --blue:#557d9b; --blue-deep:#466e8d;
+  --card:rgba(255,255,255,.88); --line:rgba(73,103,113,.12);
+  --shadow:0 14px 38px rgba(68,91,92,.10);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;color:var(--ink);background:#f5f8f6}
+body{min-height:100dvh;padding-bottom:94px;overflow-x:hidden}
+button{font:inherit}
+.morning-bg{position:fixed;inset:0;z-index:-1;overflow:hidden;background:
+  radial-gradient(circle at 18% 5%,rgba(255,244,206,.72),transparent 32%),
+  radial-gradient(circle at 90% 30%,rgba(207,227,214,.48),transparent 34%),
+  linear-gradient(155deg,#fbfcf7 0%,#f3f7f4 48%,#eef5f3 100%)}
+.morning-bg:after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,rgba(255,255,255,.58),transparent 46%)}
+.leaf{position:absolute;width:115px;height:46px;border-radius:100% 0 100% 0;background:rgba(150,183,158,.12);filter:blur(.3px);transform:rotate(-28deg)}
+.leaf-a{right:-24px;top:82px}.leaf-b{right:28px;top:138px;transform:rotate(24deg) scale(.72)}.leaf-c{left:-58px;bottom:190px;transform:rotate(18deg) scale(1.15)}
+.app-shell{width:min(100% - 36px,520px);margin:0 auto;padding:56px 0 28px}
+.top{padding:4px 4px 25px}
+.eyebrow,.section-label{margin:0 0 8px;font-size:11px;letter-spacing:.16em;font-weight:700;color:#7c9694}
+.top h1{margin:0;font-size:28px;line-height:1.35;letter-spacing:.02em;font-weight:650}
+.date{margin:8px 0 0;color:var(--muted);font-size:14px}
+.card{background:var(--card);border:1px solid rgba(255,255,255,.76);border-radius:24px;box-shadow:var(--shadow);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.record-card{padding:25px 24px 20px;margin-bottom:18px}
+.card-icon{display:grid;place-items:center;width:42px;height:42px;margin-bottom:18px;border-radius:14px;background:#edf4f4;color:#668e96;font-size:23px}
+.card h2{margin:0;font-size:22px;letter-spacing:.01em}
+.body-copy{margin:10px 0 22px;color:#5f6f75;font-size:15px;line-height:1.75}
+.primary-button{width:100%;min-height:54px;border:0;border-radius:16px;background:var(--blue);color:#fff;font-weight:700;letter-spacing:.02em;box-shadow:0 8px 18px rgba(74,112,140,.18)}
+.primary-button:active{background:var(--blue-deep);transform:translateY(1px)}
+.time-note{text-align:center;margin:10px 0 0;color:#89969a;font-size:12px}
+.data-card{padding:22px 24px}
+.data-heading{display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:17px;border-bottom:1px solid var(--line)}
+.line-icon{font-size:25px;color:#87a3a4}
+.data-row{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;padding-top:17px}
+.data-number{font-size:32px;font-weight:650}.data-unit{margin-left:3px;font-size:14px;color:var(--muted)}
+.data-row p{margin:3px 0 0;color:var(--muted);font-size:12px;line-height:1.6}
+.data-message{text-align:right}
+.bottom-nav{position:fixed;z-index:10;left:0;right:0;bottom:0;height:82px;padding:8px max(18px,env(safe-area-inset-left)) calc(8px + env(safe-area-inset-bottom));display:flex;justify-content:center;gap:clamp(34px,13vw,72px);background:rgba(250,252,250,.92);border-top:1px solid rgba(65,91,96,.09);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.nav-item{min-width:52px;border:0;background:transparent;color:#8a9699;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.nav-item span{font-size:22px;line-height:1}.nav-item.active{color:var(--blue-deep);font-weight:700}
+@media(max-width:380px){.app-shell{width:calc(100% - 28px);padding-top:42px}.top h1{font-size:25px}.record-card,.data-card{padding-left:20px;padding-right:20px}}
+
+.screen{display:none}.screen.active{display:block}.bottom-nav[hidden]{display:none}
+.flow-head{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:12px;padding:2px 2px 18px}
+.flow-head h1{margin:0;font-size:26px}.flow-head .eyebrow{margin-bottom:3px}.step-count{font-size:13px;color:#7c8c91;font-weight:700}
+.back-button{width:42px;height:42px;border:1px solid rgba(72,100,108,.12);border-radius:14px;background:rgba(255,255,255,.72);color:#557786;font-size:32px;line-height:1}
+.flow-intro{margin:0 4px 18px;color:#66777c;font-size:14px;line-height:1.7}
+.form-card{padding:22px 20px;margin-bottom:16px}.form-card h2{font-size:19px}.helper{margin:7px 0 15px;color:#879397;font-size:12px}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.choice-grid button{min-height:46px;padding:10px 9px;border:1px solid #dbe4e3;border-radius:13px;background:rgba(255,255,255,.7);color:#4d5e64;font-size:13px}
+.choice-grid button.selected{border-color:#789eb5;background:#edf4f7;color:#416d88;font-weight:700;box-shadow:inset 0 0 0 1px rgba(85,125,155,.18)}
+.sleep-choice{grid-template-columns:1fr}.field-title{margin:20px 0 10px;font-size:13px;font-weight:700;color:#53656b}
+.time-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}.time-fields label{font-size:12px;color:#6e7d82}.time-fields input{width:100%;margin-top:7px;min-height:48px;border:1px solid #dbe4e3;border-radius:13px;background:#fff;padding:0 10px;color:#33464d;font-size:16px}
+.next-button{margin-top:6px}.next-button:disabled{opacity:.42;box-shadow:none}.next-button:disabled:active{transform:none;background:var(--blue)}
+@media(max-width:380px){.choice-grid{grid-template-columns:1fr}.time-fields{grid-template-columns:1fr 1fr}}
+
+.env-fields{display:grid;gap:12px;margin-top:18px}.env-fields label{display:grid;grid-template-columns:72px 1fr;align-items:center;gap:12px;color:#53656b;font-size:14px;font-weight:700}.number-field{display:flex;align-items:center;border:1px solid #dbe4e3;border-radius:14px;background:rgba(255,255,255,.78);overflow:hidden}.number-field input{min-width:0;width:100%;height:52px;border:0;outline:0;background:transparent;padding:0 12px;color:#33464d;font-size:19px;text-align:right}.number-field b{min-width:54px;padding-right:13px;color:#7a898e;font-size:13px;font-weight:600}.env-note{margin:18px 2px 0;padding-top:15px;border-top:1px solid var(--line);color:#839095;font-size:12px;line-height:1.7}
+
+.secondary-button{width:100%;min-height:52px;margin:12px 0 10px;border:1px solid #b9ccd3;border-radius:16px;background:rgba(255,255,255,.82);color:#4d7287;font-weight:700}.rppg-video-wrap{position:relative;width:100%;margin:16px auto;touch-action:none;overflow:hidden;border-radius:18px;background:#182024}.rppg-video-wrap video{width:100%;display:block;transform:scaleX(-1)}#rppg-roi{position:absolute;left:38%;top:20%;width:24%;height:9%;border:3px solid #fff;border-radius:10px;background:rgba(255,255,255,.08);touch-action:none}#rppg-roi:after{content:"額に合わせる";position:absolute;left:50%;top:-27px;transform:translateX(-50%);white-space:nowrap;padding:3px 6px;border-radius:5px;background:rgba(0,0,0,.55);color:#fff;font-size:11px;font-weight:700}.camera-status{text-align:center;color:#62747a;font-size:14px;line-height:1.6}.rppg-countdown{text-align:center;min-height:42px;margin:8px 0;font-size:30px;font-weight:700;color:#466e8d}.metric-preview{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:18px}.metric-preview div{padding:14px 6px;border-radius:14px;background:#f3f7f7;text-align:center}.metric-preview b{display:block;font-size:24px}.metric-preview span{font-size:11px;color:#75858a}.metric-preview small{display:block;margin-top:5px;color:#63777d;font-size:11px}
+
+.today-card{padding:23px 21px;margin-bottom:16px}.today-card h2{font-size:20px}.today-lead{margin:16px 0 7px;font-size:17px;font-weight:700;color:#40565e}.today-copy{margin:8px 0 0;color:#617278;font-size:14px;line-height:1.75}.emphasis{padding:27px 23px;background:rgba(255,255,255,.94);box-shadow:0 16px 42px rgba(68,91,92,.13)}.guide-copy{margin:14px 0 2px;font-size:17px;line-height:1.9;color:#3f555e;font-weight:600}.text-button{margin:12px 0 0;padding:0;border:0;background:transparent;color:#527d98;font-size:13px;font-weight:700}.detail-metrics{margin-top:14px;padding:13px 15px;border-radius:14px;background:#f3f7f7}.detail-metrics p{display:flex;justify-content:space-between;margin:7px 0;color:#65777c;font-size:13px}.result-next{margin-top:16px}
+
+/* Approved phase-A visual refresh. No data or measurement logic changes. */
+:root{--ink:#102c62;--muted:#4d6684;--blue:#1786df;--blue-deep:#096bc3;--card:rgba(255,255,255,.95);--line:rgba(30,94,159,.14);--shadow:0 12px 28px rgba(33,75,119,.12)}
+html,body{background:#f5faff;color:var(--ink)}
+.morning-bg{background:radial-gradient(ellipse at 6% 8%,rgba(255,239,159,.62),transparent 40%),radial-gradient(ellipse at 96% 28%,rgba(124,188,71,.30),transparent 30%),radial-gradient(ellipse at 9% 93%,rgba(103,172,87,.16),transparent 30%),linear-gradient(155deg,#fffef4,#f4faff 58%,#edf8f3)}
+.morning-bg:after{background:linear-gradient(105deg,rgba(255,255,255,.28),transparent 65%)}
+.leaf{background:rgba(104,172,57,.35);filter:blur(1.4px)}
+.leaf-a{width:150px;height:60px;top:95px;right:-28px}.leaf-b{width:90px;height:43px;top:155px;right:30px}.leaf-c{width:125px;height:53px;left:-65px;bottom:125px}
+.app-shell{padding-top:34px}.top{padding:12px 5px 20px}.top h1{font-size:23px;color:#102b61}.home-hero-title{font-size:clamp(29px,7.2vw,39px);font-weight:800;line-height:1.33;letter-spacing:.01em;color:#092a68;margin:17px 0 10px}.date{font-size:15px;color:#4d6684}
+.card{border:1px solid rgba(255,255,255,.94);border-radius:26px;box-shadow:var(--shadow)}
+.record-card{padding:0;margin-bottom:18px;background:transparent;border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+.record-card>.card-icon,.record-card>div:not(.card-icon),.record-card>.time-note{display:none}
+.primary-button{min-height:60px;border-radius:999px;font-size:17px;background:linear-gradient(120deg,#249be9,#0873ce);box-shadow:0 9px 18px rgba(20,121,208,.2)}
+.record-card .primary-button{min-height:75px;font-size:21px;border:4px solid white}
+.record-card .primary-button span{margin-left:12px;font-size:28px;vertical-align:-1px}
+.data-card{padding:24px 20px}.data-heading h2{font-size:21px}.data-number{font-size:46px;color:#082d69}.data-row p{font-size:14px}.data-row .helper{font-size:13px}.data-message{font-size:13px!important}
+.eyebrow,.section-label{font-size:12px;letter-spacing:.08em;color:#437aa5}.helper,.time-note,.env-note{font-size:13px}.flow-head h1{color:#102c62}.flow-head{border-bottom:3px solid rgba(39,139,223,.12);margin-bottom:14px}.step-count{color:#157ed3;font-size:14px}.form-card h2{font-size:20px}.choice-grid button{min-height:49px;font-size:14px}.choice-grid button.selected{border:2px solid #258be1;background:#e8f4ff;color:#104b8e}.back-button{color:#096bc3}.flow-intro{font-size:15px}.rppg-countdown{color:#0873ce}.today-lead,.guide-copy{color:#103a75}.emphasis{background:rgba(232,247,255,.96)}
+/* Phase A has no implemented history/profile screens. Keep inactive nav hidden. */
+.bottom-nav{display:none!important}
+@media(max-width:380px){.home-hero-title{font-size:28px}.data-row{gap:8px}.data-message{font-size:12px!important}.record-card .primary-button{font-size:19px}}
+
+/* HOME visual refinement after desktop screenshot review */
+.morning-bg{z-index:0;pointer-events:none;background:radial-gradient(ellipse at 8% 6%,rgba(255,226,123,.52),transparent 37%),radial-gradient(ellipse at 88% 18%,rgba(142,192,86,.40),transparent 27%),radial-gradient(ellipse at 93% 41%,rgba(190,217,130,.29),transparent 22%),linear-gradient(160deg,#fffdf0 0%,#f9fcf5 45%,#eef8f6 100%)}
+.app-shell{position:relative;z-index:1}.leaf{opacity:.85;filter:blur(.4px);box-shadow:20px 23px 0 rgba(119,173,57,.17),-16px 43px 0 rgba(127,181,67,.14)}
+.leaf-a{right:4%;top:17%;width:125px;height:52px;background:rgba(125,179,67,.32)}
+.leaf-b{right:1%;top:29%;width:95px;height:45px;background:rgba(119,173,57,.28)}
+.leaf-c{left:-38px;bottom:10%;background:rgba(125,179,67,.23)}
+#home-screen .top{background:linear-gradient(100deg,rgba(255,255,255,.36),rgba(255,255,255,0));border-radius:22px}
+#home-screen .data-card{background:rgba(255,255,255,.95)}
+#home-screen .data-row{align-items:center;gap:16px}#home-screen .data-row>div{min-width:44%}
+#home-screen .data-row p{font-size:15px;line-height:1.65;color:#35547c}
+#home-screen .data-row .helper{font-size:14px;color:#466586}
+#home-screen .data-message{font-size:14px!important;text-align:left;border-left:1px solid #cbddea;padding-left:15px}
+#home-screen .data-number{font-size:54px}
+@media(max-width:380px){#home-screen .data-row{gap:10px}#home-screen .data-message{font-size:13px!important;padding-left:10px}}
+
+/* Post-flow review: improve readability on input and TODAY screens without altering logic. */
+.flow-intro{font-size:16px;line-height:1.85;color:#355476}
+.form-card{padding:24px 22px}.form-card h2{font-size:21px;line-height:1.5}
+.helper{font-size:14px;line-height:1.7;color:#526b84}
+.choice-grid button{font-size:15px;line-height:1.5;min-height:54px;color:#284c72;border-color:#cadce7}
+.field-title,.time-fields label{font-size:15px;color:#294d71}
+.env-fields label{font-size:16px;color:#294d71}.env-note{font-size:14px;color:#4e6881}
+.camera-status{font-size:16px;color:#355476}.secondary-button{font-size:16px;color:#245b89}
+.today-card{padding:25px 23px}.today-card h2{font-size:22px}.today-lead{font-size:18px}.today-copy{font-size:16px;color:#3c5978}.guide-copy{font-size:18px;line-height:1.85}.text-button{font-size:15px}
+.data-card .helper{color:#466586}
+@media(max-width:380px){.form-card{padding:20px 17px}.choice-grid button{font-size:14px;min-height:52px}.flow-intro{font-size:15px}}
+
+/* Approved visual structure: progress segments, icon-led cards, selected states. */
+.visual-step-progress{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:-4px 3px 17px}
+.visual-step-progress i{display:block;height:5px;border-radius:6px;background:#dce8f4}.visual-step-progress i.on{background:linear-gradient(90deg,#29a1ed,#1274d2)}
+.flow-head{border-bottom:0;margin-bottom:4px}.flow-head .eyebrow{font-size:12px}
+.form-card{background:rgba(255,255,255,.96);border-radius:25px;box-shadow:0 10px 25px rgba(34,81,126,.1)}
+.section-icon{display:inline-grid;place-items:center;vertical-align:middle;margin-right:10px;width:33px;height:33px;border-radius:11px;background:#e6f4ff;color:#1689dc;font-size:19px;letter-spacing:0}
+.form-card .section-label,.today-card .section-label{display:flex;align-items:center;letter-spacing:.07em}
+.choice-grid button{background:#f8fbff;border:1.5px solid #d4e3f0;border-radius:15px;transition:background .12s,border-color .12s}
+.choice-grid button.selected{background:#e2f2ff;border:2px solid #158be5;color:#073e82;box-shadow:0 0 0 2px rgba(23,138,221,.1)}
+.condition-choices{grid-template-columns:repeat(2,minmax(0,1fr))}
+.condition-choices button{min-height:72px;padding-top:31px;position:relative;font-weight:650}
+.condition-choices button:before{content:'●';position:absolute;top:7px;left:50%;transform:translateX(-50%);display:grid;place-items:center;width:25px;height:25px;border-radius:50%;background:#fef0ce;color:#f0a83b;font-size:15px}
+.condition-choices button:nth-child(1):before,.condition-choices button:nth-child(2):before{background:#dcf4e5;color:#45a873}
+.condition-choices button:nth-child(4):before,.condition-choices button:nth-child(5):before{background:#ffe7e7;color:#e57e7e}
+.env-card .env-fields{padding:5px 0}.env-card .number-field{background:#f8fbff;border-color:#cfdfec}
+.rppg-card{background:linear-gradient(165deg,rgba(255,255,255,.98),rgba(233,246,255,.95))}
+.rppg-video-wrap{border:5px solid white;box-shadow:0 8px 25px rgba(16,62,111,.15)}
+.today-card:not(.emphasis){border-top:5px solid #d7eeff}.today-card.emphasis{border-top:5px solid #53a8e6}
+@media(max-width:380px){.section-icon{width:28px;height:28px}.condition-choices button{min-height:68px}}
+
+/* Design gap pass 2: distinct camera states and TODAY visual hierarchy */
+.camera-visual-heading{display:flex;gap:14px;align-items:center;padding:15px 14px;margin-bottom:18px;background:linear-gradient(105deg,#e6f4ff,#f4fbff);border-radius:18px;color:#123f75}
+.camera-visual-icon{display:grid;place-items:center;flex:0 0 49px;width:49px;height:49px;border:2px solid #7cbce9;border-radius:50%;font-size:30px;color:#1584cf}
+.camera-visual-heading strong{font-size:18px;line-height:1.5}.camera-visual-heading p{font-size:14px;line-height:1.6;margin:4px 0 0;color:#456785}
+.rppg-card .camera-status{min-height:50px;display:grid;place-items:center;text-align:center;margin-bottom:12px}
+.rppg-card .secondary-button{min-height:56px;border-radius:15px}.rppg-card #measure-start{margin-top:8px}
+.rppg-video-wrap{overflow:hidden;border-radius:23px;background:#eaf4f8}
+.measurement-progress{height:6px;background:#e1eef8;border-radius:10px;overflow:hidden;margin:10px 0}
+.measurement-progress span{display:block;height:100%;width:100%;background:linear-gradient(90deg,#8fd0f3,#167cd1);opacity:.3}
+.rppg-countdown:not(:empty){font-size:40px;font-weight:800;color:#126fbd}
+.rppg-result{background:linear-gradient(160deg,#fff,#eef9ff);border-top:5px solid #58b7e9}
+.rppg-result .metric-preview div{background:#fff;border:1px solid #d8eaf5;border-radius:16px}
+.rppg-result .metric-preview b{font-size:27px;color:#0a4687}.rppg-result .metric-preview span,.rppg-result .metric-preview small{font-size:13px}
+.today-condition{background:rgba(255,255,255,.97);border-top:5px solid #65b4e9!important}
+.today-condition .today-lead{padding:12px 14px;background:#eef7ff;border-radius:13px}
+.today-pace{background:linear-gradient(145deg,#e5f5ff,#f4fbff);border:1px solid #d4eafa!important;border-top:5px solid #278bda!important}
+.today-pace .guide-copy{font-size:19px;line-height:1.9;color:#0d3970}
+@media(max-width:380px){.camera-visual-heading{gap:10px;padding:12px}.camera-visual-heading strong{font-size:16px}.camera-visual-heading p{font-size:13px}.today-pace .guide-copy{font-size:17px}}
+
+/* Approved results design: distinct readable metric tiles, not an unstyled gray list. */
+#detail-metrics.result-metric-grid:not([hidden]){display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:0;margin-top:17px;background:transparent;border:0}
+#detail-metrics .result-metric{min-width:0;display:flex;flex-direction:column;align-items:center;gap:8px;padding:17px 6px 14px;background:linear-gradient(160deg,#f0f9ff,#fff);border:1px solid #d4e8f8;border-radius:18px;text-align:center;box-shadow:0 4px 12px rgba(25,104,174,.06)}
+#detail-metrics .result-metric-label{font-size:12px;line-height:1.4;font-weight:700;color:#355b7d;min-height:34px}
+#detail-metrics .result-metric-label small{display:block;font-size:11px;letter-spacing:.05em;color:#5685a7}
+#detail-metrics .result-metric strong{font-size:clamp(22px,5vw,31px);line-height:1.2;color:#0c4482;font-variant-numeric:tabular-nums}
+#detail-metrics .result-metric-unit{font-size:12px;color:#567d99}
+#detail-toggle{display:inline-flex;align-items:center;min-height:44px;color:#0876c7;font-weight:700;text-decoration:underline;text-underline-offset:4px}
+#today-screen .today-condition{padding:27px 23px 24px}
+#today-screen .today-pace{padding:28px 24px}
+@media(max-width:380px){#detail-metrics.result-metric-grid:not([hidden]){gap:6px}#detail-metrics .result-metric{padding:13px 3px}#detail-metrics .result-metric-label{font-size:11px}#detail-metrics .result-metric strong{font-size:21px}}
+
+/* FIX HOME visual: soft sunlit window and indoor plant; CSS-only, no invented logo/photo. */
+#home-screen .top{position:relative;z-index:1}
+.morning-window{position:absolute;top:0;left:max(0px,calc(50% - 700px));width:min(46vw,470px);height:390px;border-right:15px solid rgba(255,255,255,.28);border-bottom:12px solid rgba(255,255,255,.2);background:linear-gradient(145deg,rgba(255,246,194,.6),rgba(250,253,240,.2));box-shadow:inset -22px -15px 60px rgba(255,248,195,.2);opacity:.8}
+.window-frame-h{position:absolute;top:39%;width:100%;height:11px;background:rgba(255,255,255,.34)}
+.window-frame-v{position:absolute;left:47%;width:11px;height:100%;background:rgba(255,255,255,.34)}
+.morning-plant{position:absolute;right:max(-35px,calc(50% - 710px));top:100px;width:235px;height:335px;opacity:.48;filter:blur(.6px);transform:rotate(-5deg)}
+.plant-stem{position:absolute;left:109px;top:65px;width:7px;height:202px;border-radius:10px;background:linear-gradient(#80b75e,#649d4d);transform:rotate(5deg)}
+.plant-leaf{position:absolute;width:90px;height:38px;border-radius:95% 0 95% 0;background:linear-gradient(135deg,#aed48b,#77b65c);box-shadow:inset 5px 3px 12px rgba(255,255,255,.24)}
+.plant-leaf-1{left:110px;top:39px;transform:rotate(-49deg)}.plant-leaf-2{left:34px;top:82px;transform:rotate(39deg) scaleX(-1)}
+.plant-leaf-3{left:117px;top:126px;transform:rotate(-33deg) scale(.9)}.plant-leaf-4{left:29px;top:157px;transform:rotate(28deg) scaleX(-1)}
+.plant-leaf-5{left:109px;top:192px;transform:rotate(-20deg) scale(.7)}
+.plant-pot{position:absolute;left:72px;top:260px;width:84px;height:66px;border-radius:4px 4px 24px 24px;background:linear-gradient(100deg,rgba(239,236,210,.8),rgba(197,212,173,.9));box-shadow:0 15px 24px rgba(107,143,87,.12)}
+#home-screen .home-hero-title{text-shadow:0 2px 18px rgba(255,255,255,.7)}
+@media(max-width:700px){.morning-window{left:-70px;width:75vw;height:320px;opacity:.48}.morning-plant{right:-95px;top:110px;transform:scale(.72) rotate(-5deg);transform-origin:top right;opacity:.3}}
+@media(prefers-reduced-motion:reduce){.morning-plant,.morning-window{transition:none}}
+
+/* Approved FIX visual fidelity: HOME-only illustrated morning scene.
+   Decorative only: no changes to controls, measurement, or saved data. */
+#home-screen{position:relative;isolation:isolate}
+#home-screen::before{
+  content:"";position:absolute;z-index:-1;pointer-events:none;
+  top:-35px;left:50%;transform:translateX(-50%);
+  width:min(100vw,760px);height:570px;
+  background:linear-gradient(90deg,rgba(255,252,227,.74) 0%,rgba(255,251,225,.44) 44%,rgba(255,255,255,.03) 78%),
+    url("../assets/morning-room.svg") center top / cover no-repeat;
+  border-radius:0 0 36px 36px;
+  -webkit-mask-image:linear-gradient(#000 0%,#000 78%,transparent 100%);
+  mask-image:linear-gradient(#000 0%,#000 78%,transparent 100%);
+}
+#home-screen .top{background:none;min-height:340px;padding-top:20px;padding-bottom:18px}
+#home-screen .top h1,#home-screen .home-hero-title{
+  text-shadow:0 2px 16px rgba(255,253,230,.98),0 0 5px #fffdf0;
+}
+#home-screen .record-card .card-icon,
+#home-screen .record-card .section-label,
+#home-screen .record-card h2,
+#home-screen .record-card .body-copy,
+#home-screen .record-card .time-note{display:none}
+#home-screen .record-card{position:relative;z-index:1;margin-top:-8px;margin-bottom:22px}
+#home-screen .record-card .primary-button{
+  min-height:66px;border:4px solid #fff;font-size:20px;
+  background:linear-gradient(110deg,#279fe9,#0873cd);
+  box-shadow:0 10px 24px rgba(19,108,165,.24)
+}
+#home-screen .data-card{border:1px solid rgba(255,255,255,.92)}
+@media(max-width:700px){
+ #home-screen::before{top:-34px;width:calc(100vw + 12px);height:530px;background-position:52% top}
+ #home-screen .top{min-height:340px}
+}
+@media(max-width:380px){
+ #home-screen::before{height:490px}
+ #home-screen .top{min-height:330px}
+ #home-screen .record-card .primary-button{font-size:18px}
+}
+
+/* FIX image 1: restore the approved card-within-hero layout. Keep app logic unchanged. */
+#home-screen .top{min-height:0;padding:10px 8px 22px}
+#home-screen .top .eyebrow,#home-screen .home-hero-title{display:none}
+#home-screen .top h1{font-size:clamp(26px,7vw,35px);line-height:1.35;color:#10223b;text-shadow:0 2px 14px #fff}
+#home-screen .date{font-size:17px;color:#1b324f;margin-top:8px}
+#home-screen::before{top:-35px;height:850px;left:50%;width:min(100vw,760px);background:linear-gradient(90deg,rgba(255,252,239,.42),rgba(255,255,255,.02)),url("../assets/morning-room.svg") center top/cover no-repeat;mask-image:linear-gradient(#000 0%,#000 76%,transparent 100%);-webkit-mask-image:linear-gradient(#000 0%,#000 76%,transparent 100%)}
+#home-screen .record-card{display:block;position:relative;margin:0 0 20px;padding:23px 20px 19px;background:rgba(255,255,255,.94);border:1px solid rgba(255,255,255,.98);border-radius:27px;box-shadow:0 12px 32px rgba(51,84,99,.13);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px)}
+#home-screen .record-card .record-card-heading{display:flex;align-items:flex-start;gap:13px;margin:0 0 17px}
+#home-screen .record-card .record-card-heading>div:last-child{flex:1;min-width:0}
+#home-screen .record-card .card-icon{display:grid;place-items:center;flex:none;width:46px;height:46px;margin:0;border-radius:50%;background:#fff5e3;color:#e9a320;font-size:30px}
+#home-screen .record-card h2{display:block;font-size:24px;line-height:1.4;color:#152b48}
+#home-screen .record-card .body-copy{display:block;margin:12px 0 0;font-size:15px;line-height:1.75;color:#52657e}
+#home-screen .record-card .primary-button{min-height:62px;font-size:clamp(16px,4.6vw,20px);border:0;background:linear-gradient(110deg,#5d92bf,#5188b6);box-shadow:0 8px 18px rgba(46,95,135,.22)}
+#home-screen .record-card .time-note{display:block;margin:10px 0 0;font-size:14px;color:#62738b}
+#home-screen .data-card{padding:23px 20px 22px;border-radius:26px;background:rgba(255,255,255,.94)}
+#home-screen .data-heading{border-bottom:0;padding-bottom:6px}
+#home-screen .data-title-wrap{display:flex;align-items:center;gap:13px}
+#home-screen .data-card-icon{display:grid;place-items:center;width:46px;height:46px;flex:none;border-radius:50%;background:#eaf3fc;color:#6094be;font-size:28px;font-weight:700}
+#home-screen .data-heading h2{font-size:23px;color:#152b48}
+#home-screen .data-row{padding-top:9px;padding-left:59px}
+#home-screen .data-number{font-size:46px;color:#142d50}
+#home-screen .data-message{font-size:13px!important}
+@media(max-width:380px){#home-screen .record-card{padding:19px 15px 17px}#home-screen .data-row{padding-left:0}#home-screen .data-card{padding:20px 15px}#home-screen .record-card h2{font-size:21px}}
+
+/* FIX-reference styling: STEP1–4 and consistent custom vector icons.
+   Presentation only: no changes to measurement, navigation, or storage. */
+.card-icon,.data-card-icon,.section-icon,.camera-visual-icon{display:inline-grid;place-items:center;flex:none;color:#438ac2;background:#eaf5fd;border-radius:50%;width:40px;height:40px;font-size:0}
+.card-icon svg,.data-card-icon svg,.section-icon svg,.camera-visual-icon svg{width:23px;height:23px}
+.icon-sun{color:#eaa52e;background:#fff5dc}.icon-chart{color:#5792bd;background:#eaf4fc}
+#home-screen .record-card{padding:22px 20px 18px;background:rgba(255,255,255,.94);border:1px solid white;box-shadow:0 15px 38px rgba(37,76,110,.12);border-radius:27px}
+#home-screen .record-card-heading{display:flex;align-items:flex-start;gap:15px}
+#home-screen .record-card .card-icon{margin:0}
+#home-screen .record-card h2{font-size:22px}
+#home-screen .record-card .body-copy{display:block;font-size:15px;margin:11px 0 20px;line-height:1.7}
+#home-screen .record-card .time-note{display:block;font-size:13px;margin-top:10px}
+#home-screen .record-card .primary-button{min-height:61px;font-size:18px}
+#home-screen .data-title-wrap{display:flex;align-items:center;gap:13px}
+#home-screen .data-card-icon{margin:0}
+#home-screen .data-heading{padding-bottom:15px}
+#home-screen .data-card h2{font-size:22px}
+#step1-screen,#step2-screen,#step3-screen,#step4-screen{padding-bottom:22px}
+#step1-screen .flow-head,#step2-screen .flow-head,#step3-screen .flow-head,#step4-screen .flow-head{grid-template-columns:38px 1fr auto;align-items:start;border:0;padding:6px 0 18px;margin:0}
+.flow-head h1{font-size:clamp(25px,6.8vw,32px);font-weight:800;line-height:1.3}
+.flow-head .eyebrow{display:none}
+.flow-head .step-count{font-size:15px;font-weight:600;color:#657792;padding-top:7px}
+.flow-head .back-button{background:rgba(255,255,255,.86);border:0;border-radius:50%;width:35px;height:35px}
+.visual-step-progress{margin:0 4px 14px}
+.flow-intro{font-size:15px;line-height:1.75;margin:0 4px 22px;color:#4d617d}
+.form-card{background:rgba(255,255,255,.96);padding:21px 19px;margin-bottom:14px;border-radius:23px;box-shadow:0 10px 30px rgba(38,75,109,.09)}
+.form-card .section-label{display:flex;align-items:center;gap:12px;margin-bottom:10px;font-size:11px;letter-spacing:.1em}
+.form-card .section-icon{width:39px;height:39px}
+.form-card h2{font-size:19px;font-weight:750;color:#102d60;line-height:1.5}
+.form-card .helper{font-size:13px;line-height:1.6;color:#60748f}
+.choice-grid{gap:8px}
+.choice-grid button{min-height:56px;border-radius:13px;background:#fff;border:1px solid #dce5ee;color:#294263;font-size:14px;box-shadow:0 2px 5px rgba(32,63,100,.025)}
+.choice-grid button.selected{background:linear-gradient(140deg,#edf8ff,#e4f2ff);border:1.5px solid #60b0e5;color:#0966a6;box-shadow:inset 0 0 0 1px rgba(66,157,220,.12)}
+.sleep-choice{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+.sleep-choice button{font-size:11px;min-height:79px;padding:8px 2px;overflow-wrap:anywhere}
+.condition-choices{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+.condition-choices button{font-size:11px;min-height:79px;padding:8px 2px;overflow-wrap:anywhere}
+.time-fields{grid-template-columns:1fr;gap:13px}
+.time-fields label{font-size:14px;font-weight:700;color:#253e65}
+.time-fields input{font-size:17px;background:#f9fbff;border-color:#dce5ee}
+.env-card .env-fields{gap:13px}
+.env-fields label{grid-template-columns:minmax(95px,1fr) minmax(105px,1fr);gap:8px;min-height:91px;border-radius:17px;background:#fff;padding:14px 12px;box-shadow:0 3px 14px rgba(28,66,104,.06);font-size:15px;color:#193660}
+.number-field{background:#f9fbff;border-color:#dce5ee}
+.number-field input{font-size:20px}
+#step4-screen .rppg-card{padding:18px}
+.camera-visual-heading{display:flex;align-items:center;gap:13px}
+.camera-visual-heading strong{font-size:17px;color:#183864}
+.camera-visual-heading p{font-size:13px;color:#637895;line-height:1.6}
+.rppg-video-wrap{border:3px solid #fff;box-shadow:0 5px 22px rgba(26,66,99,.16);border-radius:20px}
+#step1-screen>.primary-button,#step2-screen>.primary-button,#step3-screen>.primary-button{min-height:61px}
+@media(max-width:380px){.sleep-choice,.condition-choices{grid-template-columns:repeat(5,minmax(0,1fr))}.form-card{padding:18px 13px}.sleep-choice button,.condition-choices button{font-size:10px}}
+
+
+/* HOME authoritative FIX layout, 2026-10-02. No storage, navigation or rPPG changes.
+   Avoid previous full-bleed hero and competing global decorative layers. */
+body:has(#home-screen.active) .morning-bg{display:none}
+#home-screen{width:100%;padding-bottom:30px}
+#home-screen::before{top:-8px;left:50%;width:min(100vw,760px);height:590px;transform:translateX(-50%);border-radius:0;opacity:.43;background:linear-gradient(180deg,rgba(255,255,255,.35),rgba(255,255,255,.35) 57%,#f5f7f5 100%),url("../assets/morning-room.svg") center top/cover no-repeat;mask-image:linear-gradient(#000 0%,#000 64%,transparent 100%);-webkit-mask-image:linear-gradient(#000 0%,#000 64%,transparent 100%)}
+#home-screen .top{min-height:0;padding:20px 10px 27px;margin:0;background:none}
+#home-screen .top .eyebrow,#home-screen .home-hero-title{display:none}
+#home-screen .top h1{font-size:clamp(26px,6.7vw,34px);font-weight:750;line-height:1.35;letter-spacing:0;color:#102139;text-shadow:0 2px 20px white}
+#home-screen .date{font-size:17px;color:#1e344f;margin:9px 0 0}
+#home-screen .record-card,#home-screen .data-card{background:rgba(255,255,255,.97);border:1px solid rgba(255,255,255,.96);border-radius:27px;box-shadow:0 14px 34px rgba(36,68,91,.095);backdrop-filter:blur(7px)}
+#home-screen .record-card{padding:25px 20px 21px;margin:0 0 18px}
+#home-screen .record-card .record-card-heading{display:flex;align-items:flex-start;gap:15px;margin:0 0 23px}
+#home-screen .record-card .card-icon,#home-screen .data-card-icon{display:grid;place-items:center;flex:0 0 46px;width:46px;height:46px;border-radius:50%;margin:0}
+#home-screen .record-card .card-icon{background:#fff4df;color:#e9a027}
+#home-screen .data-card-icon{background:#eaf3fc;color:#6193b9}
+#home-screen .record-card .card-icon svg,#home-screen .data-card-icon svg{width:26px;height:26px}
+#home-screen .record-card h2,#home-screen .data-card h2{display:block;font-size:clamp(21px,5.4vw,25px);line-height:1.45;font-weight:760;color:#10213b}
+#home-screen .record-card .body-copy{display:block;margin:14px 0 0;font-size:16px;line-height:1.65;color:#56667d}
+#home-screen .record-card .primary-button{display:block;width:100%;min-height:62px;border:0;border-radius:40px;background:linear-gradient(105deg,#5e94bf,#5088b7);font-size:clamp(16px,4.5vw,19px);font-weight:750;box-shadow:0 9px 18px rgba(61,112,153,.20)}
+#home-screen .record-card .time-note{display:block;margin:11px 0 0;text-align:center;font-size:14px;color:#69788e}
+#home-screen .data-card{padding:25px 20px 23px;margin:0 0 18px}
+#home-screen .data-heading{border:0;padding:0;margin:0}
+#home-screen .data-title-wrap{display:flex;align-items:center;gap:15px}
+#home-screen .data-row{display:flex;align-items:center;gap:13px;padding:17px 0 0 61px}
+#home-screen .data-row>div{flex:0 0 45%;min-width:0}
+#home-screen .data-number{font-size:clamp(43px,11vw,53px);line-height:1.12;color:#112742}
+#home-screen .data-row p{margin:5px 0;font-size:14px;line-height:1.5}
+#home-screen .data-row .helper{font-size:12px}
+#home-screen .data-message{flex:1;min-width:0;margin:0!important;padding-left:14px;border-left:1px solid #d5e0e9;text-align:left;font-size:13px!important;line-height:1.65!important;color:#56667d!important}
+@media(max-width:390px){#home-screen .record-card,#home-screen .data-card{padding-left:17px;padding-right:17px}#home-screen .data-row{padding-left:0}#home-screen .data-row>div{flex-basis:48%}#home-screen .data-message{padding-left:10px;font-size:12px!important}}
+
+/* HOME FIX composition v3: single authoritative HOME override */
+/* Preserve all existing controls and data logic. No pretend ONE TRY or inactive navigation. */
+#home-screen{position:relative;isolation:isolate;padding-bottom:30px}
+#home-screen::before{content:"";position:absolute;z-index:-1;pointer-events:none;left:50%;transform:translateX(-50%);top:-38px;width:min(100vw,760px);height:880px;background:linear-gradient(180deg,rgba(255,255,255,.02) 0%,rgba(255,255,255,.02) 64%,#f5f8f6 100%),url("../assets/morning-room.svg") center top / cover no-repeat;mask-image:none;-webkit-mask-image:none;opacity:.44}
+#home-screen .top{min-height:0!important;padding:4px 7px 23px!important;background:none!important;border:0!important}
+#home-screen .top h1{font-size:clamp(27px,7vw,33px)!important;line-height:1.35;color:#142338!important;font-weight:700;letter-spacing:0;text-shadow:none!important}
+#home-screen .date{font-size:17px!important;margin-top:10px;color:#23384d!important}
+#home-screen .record-card{display:block!important;margin:0 0 17px!important;padding:24px 21px 20px!important;border-radius:27px!important;background:rgba(255,255,255,.95)!important;box-shadow:0 13px 34px rgba(57,77,94,.105)!important;border:1px solid #fff!important}
+#home-screen .record-card-heading{display:flex!important;gap:15px;align-items:flex-start;margin-bottom:21px!important}
+#home-screen .record-card .card-icon{display:grid!important;width:45px!important;height:45px!important;flex-shrink:0;margin:0!important;border-radius:50%!important}
+#home-screen .record-card .card-icon svg{width:27px;height:27px}
+#home-screen .record-card .record-card-heading>div:last-child{min-width:0;flex:1}
+#home-screen .record-card h2{display:block!important;font-size:clamp(22px,5.9vw,27px)!important;color:#15233a!important;margin:0 0 14px!important}
+#home-screen .record-card .body-copy{display:block!important;font-size:15px!important;line-height:1.75!important;color:#53647a!important;margin:0!important;max-width:22em}
+#home-screen .record-card .primary-button{min-height:64px!important;font-size:clamp(16px,4.5vw,19px)!important;border:0!important;border-radius:999px!important;background:linear-gradient(100deg,#6194be,#5388b5)!important;box-shadow:0 9px 20px rgba(65,103,142,.22)!important}
+#home-screen .record-card .time-note{display:block!important;margin-top:12px!important;font-size:14px!important;color:#65748b!important}
+#home-screen .data-card{margin-bottom:16px!important;padding:23px 21px 22px!important;background:rgba(249,252,255,.97)!important;border-radius:26px!important;box-shadow:0 12px 30px rgba(57,77,94,.09)!important}
+#home-screen .data-heading{padding-bottom:8px!important;border:0!important}
+#home-screen .data-title-wrap{display:flex;gap:15px;align-items:center}
+#home-screen .data-card-icon{display:grid!important;width:45px!important;height:45px!important;border-radius:50%!important}
+#home-screen .data-heading h2{font-size:clamp(22px,5.9vw,27px)!important;color:#15233a!important}
+#home-screen .data-row{padding:10px 0 0 60px!important;display:flex;align-items:center;gap:12px!important}
+#home-screen .data-row>div{flex:1;min-width:0!important}
+#home-screen .data-number{font-size:clamp(42px,12vw,55px)!important;color:#14233b!important}
+#home-screen .data-message{flex:1;min-width:0;font-size:13px!important;line-height:1.65!important;padding-left:12px!important;color:#53647a!important}
+@media(max-width:380px){#home-screen .record-card,#home-screen .data-card{padding-left:16px!important;padding-right:16px!important}#home-screen .data-row{padding-left:0!important}#home-screen .record-card-heading{gap:10px}}
+
+/* Narrow correction: keep the MY DATA heading on one line on iPhone. */
+#home-screen .data-heading,#home-screen .data-title-wrap{width:100%;min-width:0}
+#home-screen .data-title-wrap>div:last-child{flex:1;min-width:0}
+#home-screen #data-title{font-size:clamp(20px,5.3vw,25px)!important;white-space:nowrap;word-break:keep-all;letter-spacing:-.025em}
+
+/* FIX background asset: HOME and STEP 1-4; asset uploaded separately to images/morning-background.png. */
+.morning-bg{background:#f8f7f0 url('../images/morning-background.png') center top / cover no-repeat!important}
+.morning-bg::after,.morning-bg .morning-window,.morning-bg .morning-plant,.morning-bg .leaf{display:none!important}
+@media(min-width:650px){.morning-bg{background-position:center center}}
+
+/* FIX: uploaded morning image takes precedence over all obsolete HOME illustration layers. */
+body .morning-bg{display:block!important;position:fixed;inset:0;z-index:0;background:#f8f7f0 url('../images/morning-background.png') center top / cover no-repeat!important}
+.app-shell{position:relative;z-index:1}
+#home-screen::before{display:none!important}
+
+/* STEP 1 FIX visual: illustrated choice buttons; behavior and storage unchanged. */
+#step1-screen .choice-grid[data-group="activity"]{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#step1-screen .choice-grid[data-group="activity"] button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:76px;padding:9px 7px;text-align:left;font-size:clamp(12px,3.4vw,15px);line-height:1.35}
+#step1-screen .choice-art{display:grid;place-items:center;flex:0 0 29px;color:#8092aa}
+#step1-screen .choice-art svg{width:27px;height:27px}
+#step1-screen .choice-caption{min-width:0;overflow-wrap:normal;word-break:normal}
+#step1-screen .choice-grid button.selected .choice-art{color:#338dcb}
+#step1-screen .sleep-choice{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+#step1-screen .sleep-choice button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;min-height:107px;padding:8px 2px;font-size:clamp(10px,2.8vw,13px);line-height:1.3}
+#step1-screen .sleep-choice .choice-art{flex:0 0 auto}
+#step1-screen .sleep-choice .choice-art svg{width:27px;height:27px}
+#step1-screen .choice-grid button.selected{background:#e6f4ff;border-color:#56a6d9;box-shadow:inset 0 0 0 1px #b9dffa,0 3px 9px rgba(41,112,164,.10)}
+#step1-screen .choice-grid[data-group="unusual"] button{min-height:65px;font-size:clamp(13px,3.5vw,15px)}
+#step1-screen .time-fields input{min-height:53px;border-radius:13px}
+
+/* STEP1 activity buttons: fixed icon column and vertical alignment regardless of label wrapping. */
+#step1-screen .choice-grid[data-group="activity"] button{display:grid;grid-template-columns:30px minmax(0,1fr);column-gap:9px;align-items:center;justify-content:initial;text-align:left;padding:10px 9px;min-height:86px}
+#step1-screen .choice-grid[data-group="activity"] .choice-art{width:30px;height:30px;flex:none;display:grid;place-items:center;justify-self:center;align-self:center}
+#step1-screen .choice-grid[data-group="activity"] .choice-art svg{width:27px;height:27px}
+#step1-screen .choice-grid[data-group="activity"] .choice-caption{display:block;width:100%;min-width:0;text-align:left;line-height:1.4;align-self:center}
+
+/* STEP 1 sleep: all five face icons share the same top baseline even when captions wrap. */
+#step1-screen .sleep-choice button{justify-content:flex-start!important;align-items:center!important;gap:10px!important;padding-top:17px!important;padding-bottom:9px!important;min-height:116px!important}
+#step1-screen .sleep-choice .choice-art{display:grid!important;place-items:center!important;flex:0 0 29px!important;width:29px!important;height:29px!important;margin:0!important;align-self:center!important}
+#step1-screen .sleep-choice .choice-art svg{display:block!important;width:27px!important;height:27px!important}
+#step1-screen .sleep-choice .choice-caption{display:block!important;width:100%!important;text-align:center!important;line-height:1.35!important}
+
+/* STEP1 difference: illustrated two-column buttons, consistent with activity. */
+#step1-screen .choice-grid[data-group="unusual"]{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#step1-screen .choice-grid[data-group="unusual"] button{display:grid!important;grid-template-columns:30px minmax(0,1fr);column-gap:9px;align-items:center;text-align:left;justify-content:initial;min-height:76px;padding:10px 9px;font-size:clamp(13px,3.5vw,15px)}
+#step1-screen .choice-grid[data-group="unusual"] .choice-art{width:30px;height:30px;display:grid;place-items:center;color:#8092aa}
+#step1-screen .choice-grid[data-group="unusual"] .choice-art svg{width:27px;height:27px}
+#step1-screen .choice-grid[data-group="unusual"] .choice-caption{min-width:0;line-height:1.4;text-align:left}
+#step1-screen .choice-grid[data-group="unusual"] button.selected .choice-art{color:#338dcb}
+
+/* STEP2 bedroom: three icon-led input rows; no changes to field IDs or persistence. */
+#step2-screen .env-fields{display:grid;gap:12px}
+#step2-screen .env-fields .env-field-row{display:grid;grid-template-columns:46px minmax(0,1fr) minmax(118px,42%);align-items:center;gap:9px;min-height:104px;padding:15px 13px;background:rgba(255,255,255,.96);border-radius:20px;box-shadow:0 7px 20px rgba(35,64,92,.055)}
+#step2-screen .env-field-icon{width:43px;height:43px;display:grid;place-items:center;border-radius:50%;background:#eaf5ff;color:#4d97c5}
+#step2-screen .env-field-icon.temp{background:#fff3e2;color:#e69c28}
+#step2-screen .env-field-icon.co2{background:#edf7eb;color:#4b8751}
+#step2-screen .env-field-icon svg{width:26px;height:26px}
+#step2-screen .env-field-name{font-size:clamp(13px,3.7vw,17px);font-weight:750;line-height:1.35;color:#152d52;min-width:0}
+#step2-screen .env-field-row .number-field{min-width:0;width:100%;margin:0}
+#step2-screen .env-field-row .number-field input{min-width:0;width:100%}
+@media(max-width:365px){#step2-screen .env-fields .env-field-row{grid-template-columns:38px minmax(0,1fr) minmax(105px,40%);padding:12px 8px;gap:6px}#step2-screen .env-field-icon{width:37px;height:37px}}
+
+/* STEP3: five expression icons on existing condition choices. Text/selection/storage unchanged. */
+#step3-screen .condition-choices{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+#step3-screen .condition-choices button{display:flex;flex-direction:column;justify-content:flex-start;align-items:center;gap:9px;min-width:0;min-height:112px;padding:15px 2px 9px;font-size:clamp(10px,2.7vw,13px);line-height:1.3;overflow-wrap:anywhere}
+#step3-screen .condition-choices button::before{content:"";display:block;flex:0 0 29px;width:29px;height:29px;background:center / contain no-repeat;opacity:.95}
+#step3-screen .condition-choices button:nth-child(1)::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%238192ab%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Ccircle%20cx%3D%229%22%20cy%3D%2210%22%20r%3D%22.8%22%20fill%3D%22currentColor%22%20stroke%3D%22none%22%2F%3E%3Ccircle%20cx%3D%2215%22%20cy%3D%2210%22%20r%3D%22.8%22%20fill%3D%22currentColor%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M8%2014q4%205%208%200%22%2F%3E%3C%2Fsvg%3E")}
+#step3-screen .condition-choices button:nth-child(1).selected::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23258bc9%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Ccircle%20cx%3D%229%22%20cy%3D%2210%22%20r%3D%22.8%22%20fill%3D%22currentColor%22%20stroke%3D%22none%22%2F%3E%3Ccircle%20cx%3D%2215%22%20cy%3D%2210%22%20r%3D%22.8%22%20fill%3D%22currentColor%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M8%2014q4%205%208%200%22%2F%3E%3C%2Fsvg%3E")}
+#step3-screen .condition-choices button:nth-child(2)::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%238192ab%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Ccircle%20cx%3D%229%22%20cy%3D%2210%22%20r%3D%22.8%22%20fill%3D%22currentColor%22%20stroke%3D%22none%22%2F%3E%3Ccircle%20cx%3D%2215%22%20cy%3D%2210%22%20r%3D%22.8%22%20fill%3D%22currentColor%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M8.5%2014q3.5%203.5%207%200%22%2F%3E%3C%2Fsvg%3E")}
+#step3-screen .condition-choices button:nth-child(2).selected::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23258bc9%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Ccircle%20cx%3D%229%22%20cy%3D%2210%22%20r%3D%22.8%22%20fill%3D%22currentColor%22%20stroke%3D%22none%22%2F%3E%3Ccircle%20cx%3D%2215%22%20cy%3D%2210%22%20r%3D%22.8%22%20fill%3D%22currentColor%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M8.5%2014q3.5%203.5%207%200%22%2F%3E%3C%2Fsvg%3E")}
+#step3-screen .condition-choices button:nth-child(3)::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%238192ab%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Ccircle%20cx%3D%229%22%20cy%3D%2210%22%20r%3D%22.8%22%20fill%3D%22currentColor%22%20stroke%3D%22none%22%2F%3E%3Ccircle%20cx%3D%2215%22%20cy%3D%2210%22%20r%3D%22.8%22%20fill%3D%22currentColor%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M9%2015h6%22%2F%3E%3C%2Fsvg%3E")}
+#step3-screen .condition-choices button:nth-child(3).selected::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23258bc9%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Ccircle%20cx%3D%229%22%20cy%3D%2210%22%20r%3D%22.8%22%20fill%3D%22currentColor%22%20stroke%3D%22none%22%2F%3E%3Ccircle%20cx%3D%2215%22%20cy%3D%2210%22%20r%3D%22.8%22%20fill%3D%22currentColor%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M9%2015h6%22%2F%3E%3C%2Fsvg%3E")}
+#step3-screen .condition-choices button:nth-child(4)::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%238192ab%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Ccircle%20cx%3D%229%22%20cy%3D%2210%22%20r%3D%22.8%22%20fill%3D%22currentColor%22%20stroke%3D%22none%22%2F%3E%3Ccircle%20cx%3D%2215%22%20cy%3D%2210%22%20r%3D%22.8%22%20fill%3D%22currentColor%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M8.5%2016q3.5-3.5%207%200%22%2F%3E%3C%2Fsvg%3E")}
+#step3-screen .condition-choices button:nth-child(4).selected::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23258bc9%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Ccircle%20cx%3D%229%22%20cy%3D%2210%22%20r%3D%22.8%22%20fill%3D%22currentColor%22%20stroke%3D%22none%22%2F%3E%3Ccircle%20cx%3D%2215%22%20cy%3D%2210%22%20r%3D%22.8%22%20fill%3D%22currentColor%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M8.5%2016q3.5-3.5%207%200%22%2F%3E%3C%2Fsvg%3E")}
+#step3-screen .condition-choices button:nth-child(5)::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%238192ab%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Ccircle%20cx%3D%229%22%20cy%3D%2210%22%20r%3D%22.8%22%20fill%3D%22currentColor%22%20stroke%3D%22none%22%2F%3E%3Ccircle%20cx%3D%2215%22%20cy%3D%2210%22%20r%3D%22.8%22%20fill%3D%22currentColor%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M8%2017q4-6%208%200%22%2F%3E%3C%2Fsvg%3E")}
+#step3-screen .condition-choices button:nth-child(5).selected::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23258bc9%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Ccircle%20cx%3D%229%22%20cy%3D%2210%22%20r%3D%22.8%22%20fill%3D%22currentColor%22%20stroke%3D%22none%22%2F%3E%3Ccircle%20cx%3D%2215%22%20cy%3D%2210%22%20r%3D%22.8%22%20fill%3D%22currentColor%22%20stroke%3D%22none%22%2F%3E%3Cpath%20d%3D%22M8%2017q4-6%208%200%22%2F%3E%3C%2Fsvg%3E")}
+#step3-screen .condition-choices button.selected{background:#e9f5ff;border-color:#60a9d5;box-shadow:inset 0 0 0 1px #b9dffa}
+
+/* STEP3 layout correction: cancel older absolutely-positioned condition dots. */
+#step3-screen .condition-choices button::before{position:static;top:auto;left:auto;transform:none;border-radius:0;background-color:transparent;display:block;flex-shrink:0;margin:0 auto 4px}
+#step3-screen .condition-choices button{gap:0;justify-content:flex-start;text-align:center;min-height:100px;padding:15px 2px 10px}
+/* STEP3 optional feeling: individual icons in two-column buttons. */
+#step3-screen .choice-grid[data-group="morning-feeling"] button{display:grid;grid-template-columns:31px minmax(0,1fr);gap:10px;align-items:center;justify-content:initial;text-align:left;min-height:70px;padding:10px 12px}
+#step3-screen .choice-grid[data-group="morning-feeling"] button::before{content:"";display:block;width:29px;height:29px;background:center / contain no-repeat}
+#step3-screen .choice-grid[data-group="morning-feeling"] button:nth-child(1)::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%238192ab%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M4%2012l5%205L20%206%22%2F%3E%3C%2Fsvg%3E")}
+#step3-screen .choice-grid[data-group="morning-feeling"] button:nth-child(1).selected::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23258bc9%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M4%2012l5%205L20%206%22%2F%3E%3C%2Fsvg%3E")}
+#step3-screen .choice-grid[data-group="morning-feeling"] button:nth-child(2)::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%238192ab%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M8%205c-3%200-4%202-4%204s2%204%205%204h4a4%204%200%200%200%200-8H8Z%22%2F%3E%3Cpath%20d%3D%22M16%2016h.01M19%2020h.01%22%2F%3E%3C%2Fsvg%3E")}
+#step3-screen .choice-grid[data-group="morning-feeling"] button:nth-child(2).selected::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23258bc9%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M8%205c-3%200-4%202-4%204s2%204%205%204h4a4%204%200%200%200%200-8H8Z%22%2F%3E%3Cpath%20d%3D%22M16%2016h.01M19%2020h.01%22%2F%3E%3C%2Fsvg%3E")}
+#step3-screen .choice-grid[data-group="morning-feeling"] button:nth-child(3)::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%238192ab%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Cpath%20d%3D%22M8%208l2%202m4%200%202-2M9%2016h6%22%2F%3E%3C%2Fsvg%3E")}
+#step3-screen .choice-grid[data-group="morning-feeling"] button:nth-child(3).selected::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23258bc9%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Cpath%20d%3D%22M8%208l2%202m4%200%202-2M9%2016h6%22%2F%3E%3C%2Fsvg%3E")}
+#step3-screen .choice-grid[data-group="morning-feeling"] button:nth-child(4)::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%238192ab%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M5%206h14M4%2011h16M7%2016h10M10%2021h4%22%2F%3E%3C%2Fsvg%3E")}
+#step3-screen .choice-grid[data-group="morning-feeling"] button:nth-child(4).selected::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23258bc9%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M5%206h14M4%2011h16M7%2016h10M10%2021h4%22%2F%3E%3C%2Fsvg%3E")}
+#step3-screen .choice-grid[data-group="morning-feeling"] button:nth-child(5)::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%238192ab%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M4%2014q3-5%207%200t9%200%22%2F%3E%3Cpath%20d%3D%22M5%208q3-5%207%200t7%200%22%2F%3E%3C%2Fsvg%3E")}
+#step3-screen .choice-grid[data-group="morning-feeling"] button:nth-child(5).selected::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23258bc9%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M4%2014q3-5%207%200t9%200%22%2F%3E%3Cpath%20d%3D%22M5%208q3-5%207%200t7%200%22%2F%3E%3C%2Fsvg%3E")}
+#step3-screen .choice-grid[data-group="morning-feeling"] button:nth-child(6)::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%238192ab%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%225%22%20cy%3D%2212%22%20r%3D%221%22%2F%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%221%22%2F%3E%3Ccircle%20cx%3D%2219%22%20cy%3D%2212%22%20r%3D%221%22%2F%3E%3C%2Fsvg%3E")}
+#step3-screen .choice-grid[data-group="morning-feeling"] button:nth-child(6).selected::before{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23258bc9%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%225%22%20cy%3D%2212%22%20r%3D%221%22%2F%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%221%22%2F%3E%3Ccircle%20cx%3D%2219%22%20cy%3D%2212%22%20r%3D%221%22%2F%3E%3C%2Fsvg%3E")}
+
+/* STEP4: measurement guidance and unobtrusive test-only controls. */
+#step4-screen .camera-checklist{margin:18px 0 14px;padding:18px 16px;border-radius:19px;background:rgba(255,255,255,.96);box-shadow:0 3px 14px rgba(34,83,120,.06)}
+#step4-screen .camera-checklist h2{display:flex;align-items:center;gap:9px;font-size:18px;margin:0 0 13px;color:#1b3b69}
+#step4-screen .camera-checklist h2 span{display:grid;place-items:center;width:35px;height:35px;border-radius:50%;background:#e5f4ff;color:#3689c5;font-size:23px}
+#step4-screen .camera-checklist ul{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+#step4-screen .camera-checklist li{display:grid;grid-template-columns:24px 1fr;align-items:start;gap:8px;color:#536b87;font-size:14px;line-height:1.65}
+#step4-screen .camera-checklist li::before{content:"✓";display:grid;place-items:center;width:21px;height:21px;border-radius:50%;background:#7ec5f1;color:white;font-weight:800}
+#step4-screen .camera-test-controls[hidden]{display:none}
+#step4-screen .camera-test-controls{margin:8px 0;border:1px dashed #a8bed0;border-radius:13px;padding:8px 12px;color:#617a94}
+#step4-screen .camera-test-controls summary{cursor:pointer;font-size:13px;font-weight:650}
+#step4-screen .camera-test-controls .secondary-button{min-height:46px;font-size:13px}
+
+/* STEP4: keep the active measurement button reachable while framing the forehead. */
+#step4-screen #measure-start:not(:disabled){position:sticky;bottom:calc(env(safe-area-inset-bottom, 0px) + 12px);z-index:12;box-shadow:0 7px 24px rgba(13,95,173,.25);margin:10px 0}
+#step4-screen .rppg-video-wrap{max-width:390px}
+#step4-screen .camera-checklist{margin-top:20px}
+
+/* STEP4: guidance first; measurement action above video stays reachable during framing. */
+#step4-screen .camera-checklist{margin:0 0 14px;padding:12px 14px}
+#step4-screen .camera-checklist ul{gap:5px}
+#step4-screen .camera-checklist li{font-size:12px;line-height:1.45}
+#step4-screen .camera-checklist h2{margin-bottom:8px;font-size:16px}
+#step4-screen #measure-start:not(:disabled){position:sticky;top:calc(env(safe-area-inset-top, 0px) + 12px);bottom:auto;z-index:12;margin:8px 0;box-shadow:0 7px 24px rgba(13,95,173,.25)}
+#step4-screen .rppg-video-wrap{margin:10px auto}
+
+/* STEP4: countdown stays visible inside camera preview while measuring. */
+#step4-screen .rppg-video-wrap .rppg-countdown:empty{display:none}
+#step4-screen .rppg-video-wrap .rppg-countdown:not(:empty){position:absolute;bottom:8%;left:50%;transform:translateX(-50%);z-index:3;width:max-content;min-width:112px;min-height:0;margin:0;padding:8px 16px;border:2px solid rgba(255,255,255,.9);border-radius:40px;background:rgba(9,48,93,.88);color:#fff;font-size:32px;line-height:1.2;text-align:center;box-shadow:0 4px 15px rgba(0,0,0,.22);pointer-events:none}
+
+/* TODAY visual: original advice-screen direction; keep existing A/B/C and measurements unchanged. */
+#today-screen .today-visual-heading{display:flex;align-items:center;gap:12px;margin:20px 4px 14px;color:#173967;font-size:clamp(21px,6vw,27px);font-weight:850;letter-spacing:.015em}
+#today-screen .today-sprout{display:grid;place-items:center;width:44px;height:44px;flex:none;border-radius:50%;background:#e5f5e9;color:#4caa74}
+#today-screen .today-sprout svg{width:29px;height:29px}
+#today-screen .today-advice-row{border-top:0!important;border-radius:21px!important;background:rgba(255,255,255,.97)!important;box-shadow:0 5px 22px rgba(32,77,111,.07)!important;padding:20px 19px!important;margin:0 0 12px!important}
+#today-screen .today-advice-row .section-label{display:flex;align-items:center;gap:10px;margin:0 0 9px;color:#5184ac;letter-spacing:.08em;font-size:11px}
+#today-screen .today-advice-row .section-icon{width:41px;height:41px;flex:none;display:grid;place-items:center;border-radius:50%;background:#e8f3fc;color:#428bc0}
+#today-screen .today-advice-row .section-icon svg{width:24px;height:24px}
+#today-screen .today-pace .section-icon{background:#fff1d8;color:#dd9a30}
+#today-screen .today-advice-row h2{font-size:21px;line-height:1.35;margin:0 0 12px;color:#183c6a}
+#today-screen .today-condition .today-lead{border-radius:13px;background:#f1f7fd;color:#234a75;padding:12px 14px;font-size:17px;font-weight:750}
+#today-screen .today-advice-row .today-copy,#today-screen .today-advice-row .guide-copy{font-size:16px;line-height:1.85;color:#355573;font-weight:500;margin:10px 0}
+#today-screen .today-pace .guide-copy{border-left:3px solid #8dc6eb;padding:3px 0 3px 14px}
+#today-screen .today-save-button{margin:22px 0 16px;min-height:62px;border-radius:36px;font-size:18px;box-shadow:0 8px 20px rgba(43,116,181,.18)}

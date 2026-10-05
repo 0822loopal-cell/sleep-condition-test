@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f4f7f5">
+  <title>Sleep Condition App</title>
+  <link rel="stylesheet" href="css/style.css?v=20261002-bedroom-icons-v1">
+  <script src="js/rppg.js" defer></script>
+</head>
+<body>
+  <div class="morning-bg" aria-hidden="true"><div class="morning-window"><span class="window-frame-h"></span><span class="window-frame-v"></span></div><div class="morning-plant"><span class="plant-stem"></span><span class="plant-leaf plant-leaf-1"></span><span class="plant-leaf plant-leaf-2"></span><span class="plant-leaf plant-leaf-3"></span><span class="plant-leaf plant-leaf-4"></span><span class="plant-leaf plant-leaf-5"></span><span class="plant-pot"></span></div><span class="leaf leaf-a"></span><span class="leaf leaf-b"></span><span class="leaf leaf-c"></span></div>
+
+  <main class="app-shell">
+    <section id="home-screen" class="screen active">
+      <header class="top">
+        <p class="eyebrow">GOOD MORNING</p><h1>おはようございます</h1><p class="home-hero-title">今日の<br>コンディションを<br>チェックしましょう</p>
+        <p id="today-date" class="date">今日も、あなたの朝から。</p>
+      </header>
+      <section class="card record-card" aria-labelledby="record-title">
+        <div class="record-card-heading"><div class="card-icon icon-sun" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg></div><div><h2 id="record-title">今朝の記録</h2>
+        <p class="body-copy">昨夜の睡眠と、今朝のあなたを記録します。</p></div></div>
+        <button class="primary-button" type="button" id="start-record">今朝の記録をはじめる <span aria-hidden="true">›</span></button><p class="time-note">◷ 約2〜3分</p>
+      </section>
+      <section class="card data-card" aria-labelledby="data-title"><div class="data-heading"><div class="data-title-wrap"><div class="data-card-icon icon-chart" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="4" height="9" rx="1"/><rect x="10" y="6" width="4" height="14" rx="1"/><rect x="17" y="3" width="4" height="17" rx="1"/></svg></div><div><h2 id="data-title">わたしのデータ</h2></div></div></div>
+        <div class="data-row"><div><span class="data-number" id="saved-count">0</span><span class="data-unit">件</span><p>保存済み記録</p><p class="helper">うちrPPG有効：<span id="valid-count">0</span>件</p></div><p class="data-message">記録を重ねると、<br>あなた比が見えてきます。</p></div>
+      </section>
+      <section id="isolated-preview" class="card data-card" hidden><p class="section-label">TEST ONLY</p><h2>架空データでTODAYを確認</h2><p class="helper">保存記録は変更しません。架空の過去7日・14日と今朝の測定値を使います。</p><button id="preview-7" class="secondary-button" type="button">7日分でTODAYを表示</button><button id="preview-14" class="secondary-button" type="button">14日分でTODAYを表示</button></section>
+      <section id="isolated-backup" class="card data-card"><h2>記録のバックアップ・復元</h2><p class="helper">現在開いているモードの記録だけを扱います。書き出したファイルには体調などの個人情報が含まれます。第三者に共有しないでください。</p><button id="test-export" class="secondary-button" type="button">記録を書き出す</button><label for="test-import-file">記録のファイルを選ぶ</label><input id="test-import-file" type="file" accept=".json,application/json"><button id="test-import" class="secondary-button" type="button">選択ファイルを確認する</button><p id="test-backup-status" class="helper" aria-live="polite"></p></section>
+      <section id="isolated-save-failure" class="card data-card" hidden><p class="section-label">TEST ONLY</p><h2>保存エラー検証</h2><p class="helper">次の保存操作を1回だけ失敗させます。既存の記録は変更しません。</p><button id="arm-save-failure" class="secondary-button" type="button">次の保存を失敗させる</button><p id="save-failure-arm-status" class="helper" aria-live="polite">未設定</p></section>
+      <section id="isolated-pace-preview" class="card data-card" hidden><p class="section-label">TEST ONLY</p><h2>活動目安A・B・Cの表示確認</h2><p class="helper">架空の14日分と今朝の測定値で確認します。保存は行いません。</p><button id="preview-pace-a" class="secondary-button" type="button">A：通常範囲</button><button id="preview-pace-b" class="secondary-button" type="button">B：1項目に変化</button><button id="preview-pace-c" class="secondary-button" type="button">C：複数項目の変化が継続</button></section>
+      <section id="isolated-record-check" class="card data-card" hidden aria-label="検証用保存内容の確認">
+        <p class="section-label">TEST ONLY</p><h2>保存内容の確認</h2>
+        <p class="helper">検証モードの最新1件のみ表示します。通常の保存記録は読み取りません。</p>
+        <button id="inspect-isolated-record" class="secondary-button" type="button">最新の保存内容を確認</button>
+        <pre id="isolated-record-output" style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.65" aria-live="polite"></pre>
+      </section>
+    </section>
+
+    <section id="step1-screen" class="screen">
+      <header class="flow-head"><button id="back-home" class="back-button" type="button" aria-label="戻る">‹</button><div><p class="eyebrow">MORNING RECORD</p><h1>昨日・昨夜</h1></div><span class="step-count">1 / 4</span></header>
+      <div class="visual-step-progress" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div><p class="flow-intro">昨日の過ごし方と、昨夜の眠りを振り返ります。</p>
+
+      <section class="card form-card">
+        <p class="section-label"><span class="section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="2"/><path d="m7 21 3-6 2-3 3 2 4 1M4 12l5-3 3 3m0 0-2 3m2-3 2-4 4 1"/></svg></span>YESTERDAY</p><h2>昨日の主な過ごし方</h2><p class="helper">いちばん近いものを1つ</p>
+        <div class="choice-grid single" data-group="activity">
+          <button type="button"><span class="choice-art" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7M5 9v12h14V9M10 21v-7h4v7"/></svg></span><span class="choice-caption">普段通り</span></button><button type="button"><span class="choice-art" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3a2 2 0 1 0 0 4 2 2 0 0 0 0-4M5 20l4-6 3-3 4 2 4 1M4 12l6-4 4 3m-2 1-1 5"/></svg></span><span class="choice-caption">運動した</span></button><button type="button"><span class="choice-art" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3a2 2 0 1 0 0 4 2 2 0 0 0 0-4M4 12l6-4 4 3m-4 9 4-7 2-3 3 2 4 1"/></svg></span><span class="choice-caption">よく身体を動かした</span></button>
+          <button type="button"><span class="choice-art" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 20v-2a6 6 0 0 1 12 0v2m1-6a5 5 0 0 1 7 4v2"/></svg></span><span class="choice-caption">趣味・外出</span></button><button type="button"><span class="choice-art" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="13" rx="2"/><path d="M8 22h8M12 18v4"/></svg></span><span class="choice-caption">座っている時間が長かった</span></button><button type="button"><span class="choice-art" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12v-2a3 3 0 0 1 6 0v2h6v-2a3 3 0 0 1 6 0v9H3v-7Zm0 3h18"/></svg></span><span class="choice-caption">ゆっくり過ごした</span></button>
+        </div>
+      </section>
+
+      <section class="card form-card">
+        <p class="section-label"><span class="section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0l-1 1-1-1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg></span>DIFFERENCE</p><h2>いつもと違ったこと</h2><p class="helper">当てはまるものを選択できます</p>
+        <div class="choice-grid multi" data-group="unusual">
+          <button type="button" data-none="true"><span class="choice-art" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg></span><span class="choice-caption">特になし</span></button>
+          <button type="button"><span class="choice-art" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18M5 11v8M19 11v8M6 11V8a3 3 0 0 1 6 0v3M12 11V7a3 3 0 0 1 6 0v4"/></svg></span><span class="choice-caption">昼寝</span></button>
+          <button type="button"><span class="choice-art" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v5M17 3v5M5 8h14v13H5zM5 12h14"/><path d="M9 16h6"/></svg></span><span class="choice-caption">飲酒</span></button>
+          <button type="button"><span class="choice-art" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/></svg></span><span class="choice-caption">遅い夕食</span></button>
+          <button type="button"><span class="choice-art" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4zM8 9h8M8 13h8M8 17h5"/></svg></span><span class="choice-caption">遅い就床</span></button>
+          <button type="button"><span class="choice-art" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></span><span class="choice-caption">その他</span></button>
+        </div>
+      </section>
+
+      <section class="card form-card">
+        <p class="section-label"><span class="section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 15.3A8 8 0 0 1 8.7 4 8 8 0 1 0 20 15.3Z"/></svg></span>LAST NIGHT</p><h2>昨夜の睡眠</h2>
+        <p class="field-title">眠れた感じ</p>
+        <div class="choice-grid single sleep-choice" data-group="sleep">
+          <button type="button"><span class="choice-art" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 10h.01M16 10h.01M8 15q4 4 8 0"/></svg></span><span class="choice-caption">よく眠れた</span></button><button type="button"><span class="choice-art" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 10h.01M16 10h.01M8 15q4 3 8 0"/></svg></span><span class="choice-caption">まあ眠れた</span></button><button type="button"><span class="choice-art" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 10h.01M16 10h.01M8 15h8"/></svg></span><span class="choice-caption">普通</span></button><button type="button"><span class="choice-art" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 10h.01M16 10h.01M8 17q4-4 8 0"/></svg></span><span class="choice-caption">あまり眠れなかった</span></button><button type="button"><span class="choice-art" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 10h.01M16 10h.01M7 18q5-7 10 0"/></svg></span><span class="choice-caption">眠れなかった</span></button>
+        </div>
+        <div class="time-fields"><label>ベッドに入った時刻<input type="time" id="bed-time"></label><label>起きた時刻<input type="time" id="wake-time"></label></div>
+      </section>
+      <button class="primary-button next-button" type="button" disabled>次へ</button>
+      <p class="time-note">次は「昨夜の寝室」です</p>
+    </section>
+    <section id="step2-screen" class="screen">
+      <header class="flow-head"><button id="back-step1" class="back-button" type="button" aria-label="戻る">‹</button><div><p class="eyebrow">MORNING RECORD</p><h1>昨夜の寝室</h1></div><span class="step-count">2 / 4</span></header>
+      <div class="visual-step-progress" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i><i></i></div><p class="flow-intro">起きたときに確認した寝室の値を記録します。測れる項目だけで大丈夫です。</p>
+      <section class="card form-card env-card">
+        <p class="section-label"><span class="section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14V5a3 3 0 0 1 6 0v9a5 5 0 1 1-6 0Z"/><path d="M13 9v8"/></svg></span>BEDROOM</p><h2>起床時の寝室環境</h2><p class="helper">入力は任意です</p>
+        <div class="env-fields">
+          <label class="env-field-row"><span class="env-field-icon temp" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14V5a3 3 0 0 1 6 0v9a5 5 0 1 1-6 0Z"/><path d="M13 9v8"/></svg></span><span class="env-field-name">寝室の温度</span><div class="number-field"><input type="number" id="room-temp" inputmode="decimal" step="0.1" placeholder="--"><b>℃</b></div></label>
+          <label class="env-field-row"><span class="env-field-icon humidity" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C9 7 5 11 5 15a7 7 0 0 0 14 0c0-4-4-8-7-13Z"/><path d="M9 16a3 3 0 0 0 3 3"/></svg></span><span class="env-field-name">寝室の湿度</span><div class="number-field"><input type="number" id="room-humidity" inputmode="decimal" step="1" placeholder="--"><b>%</b></div></label>
+          <label class="env-field-row"><span class="env-field-icon co2" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18H5a4 4 0 0 1-.4-8A7.5 7.5 0 0 1 19 9a4.5 4.5 0 0 1 0 9h-2"/><text x="12" y="15" font-size="6" text-anchor="middle" fill="currentColor" stroke="none" font-weight="bold">CO₂</text></svg></span><span class="env-field-name">寝室のCO₂</span><div class="number-field"><input type="number" id="room-co2" inputmode="numeric" step="1" placeholder="--"><b>ppm</b></div></label>
+        </div>
+        <p class="env-note">数値の良し悪しはここでは判定しません。起きたときの値を、そのまま記録します。</p>
+      </section>
+      <button class="primary-button" type="button" id="to-step3">次へ</button>
+      <p class="time-note">次は「今朝のわたし」です</p>
+    </section>
+
+    <section id="step3-screen" class="screen">
+      <header class="flow-head"><button id="back-step2" class="back-button" type="button" aria-label="戻る">‹</button><div><p class="eyebrow">MORNING RECORD</p><h1>今朝のわたし</h1></div><span class="step-count">3 / 4</span></header>
+      <div class="visual-step-progress" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div><p class="flow-intro">測定の前に、今朝のあなた自身の感覚を記録します。</p>
+      <section class="card form-card"><p class="section-label"><span class="section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0l-1 1-1-1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg></span>THIS MORNING</p><h2>今朝のコンディション</h2><p class="helper">いちばん近いものを1つ</p>
+        <div class="choice-grid single condition-choices" data-group="morning-condition"><button type="button">とても良い</button><button type="button">まあ良い</button><button type="button">普通</button><button type="button">あまり良くない</button><button type="button" data-poor="true">良くない</button></div>
+      </section>
+      <section class="card form-card"><p class="section-label"><span class="section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M4 22v-3a8 8 0 0 1 16 0v3Z"/></svg></span>FEELING</p><h2>今朝もっとも近い感じ</h2><p class="helper">任意・1つだけ選べます</p>
+        <div class="choice-grid single" data-group="morning-feeling"><button type="button">いつも通り</button><button type="button">眠い</button><button type="button">身体が重い</button><button type="button">頭がスッキリしない</button><button type="button">気分が乗らない</button><button type="button">その他</button></div>
+      </section>
+      <section id="safety-gate" class="card form-card safety-gate" hidden><p class="section-label"><span class="section-icon" aria-hidden="true">!</span>CHECK</p><h2>いつもと違う、強い不調がありますか？</h2>
+        <div class="choice-grid single" data-group="strong-symptom"><button type="button">ない</button><button type="button">ある</button></div>
+      </section>
+      <button class="primary-button" type="button" id="to-step4" disabled>次へ</button><p class="time-note">次は「rPPG測定」です</p>
+    </section>
+
+    <section id="step4-screen" class="screen">
+      <header class="flow-head"><button id="back-step3" class="back-button" type="button" aria-label="戻る">‹</button><div><p class="eyebrow">MORNING RECORD</p><h1>身体反応を測る</h1></div><span class="step-count">4 / 4</span></header>
+      <div class="visual-step-progress" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div><p class="flow-intro">白い枠を額中央の皮膚に合わせ、できるだけ動かずに20秒間測定します。</p>
+      <section class="card form-card rppg-card">
+        <div class="camera-visual-heading"><span class="camera-visual-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h4l2-3h6l2 3h4v13H3Z"/><circle cx="12" cy="13" r="4"/></svg></span><div><strong>額の位置を合わせましょう</strong><p>カメラを起動したら、白い枠の中に額を合わせます。</p></div></div><div class="camera-checklist"><h2><span aria-hidden="true">♧</span> 測定のポイント</h2><ul><li>白い枠を額中央の皮膚に合わせてください。</li><li>できるだけ動かずに、約20秒間測定します。</li><li>顔に光が当たる明るい場所で行ってください。</li><li>メガネや前髪が額にかからないようにしてください。</li></ul></div><div id="camera-status" class="camera-status" role="status" aria-live="polite">カメラはまだ起動していません。</div>
+        
+        <canvas id="rppg-source" hidden></canvas>
+        
+        <div class="measurement-progress" aria-hidden="true"><span></span></div>
+        <button id="camera-start" class="secondary-button" type="button">カメラを起動</button>
+        <button id="measure-start" class="primary-button" type="button" disabled>20秒測定</button>
+        <div id="rppg-video-wrap" class="rppg-video-wrap" hidden><video id="rppg-video" autoplay playsinline muted></video><div id="rppg-roi"></div><div id="rppg-countdown" class="rppg-countdown" aria-live="polite"></div></div>
+        <details id="camera-test-controls" class="camera-test-controls" hidden><summary>検証用メニュー</summary>
+          <button id="simulate-camera-denial" class="secondary-button" type="button" hidden>検証：カメラ拒否を再現</button>
+          <button id="simulate-measure-failure" class="secondary-button" type="button" hidden>検証：測定失敗を再現</button>
+        </details>
+        
+        <button id="skip-measurement" class="secondary-button" type="button">測定せずに進む</button>
+        
+      </section>
+      <section id="rppg-result" class="card form-card rppg-result" hidden><p class="section-label">MEASUREMENT</p><h2>測定できました</h2>
+        <div class="metric-preview"><div><b id="rppg-hr">--</b><span>bpm</span><small>HR</small></div><div><b id="rppg-rmssd">--</b><span>ms</span><small>RMSSD</small></div><div><b id="rppg-sdnn">--</b><span>ms</span><small>SDNN</small></div></div>
+        <p id="rppg-quality" class="env-note"></p><button id="show-today" class="primary-button result-next" type="button">TODAYを見る</button>
+      </section>
+    </section>
+
+    <section id="history-screen" class="screen">
+      <header class="flow-head"><button id="back-history" class="back-button" type="button" aria-label="戻る">‹</button><div><p class="eyebrow">HISTORY</p><h1>これまでの記録</h1></div></header>
+      <p class="flow-intro">朝の記録を、新しい順に振り返ります。</p>
+      <section class="card today-card"><div id="history-list"></div></section>
+      <button id="open-weekly" class="primary-button" type="button">週間サマリーを見る <span aria-hidden="true">›</span></button>
+    </section>
+
+    <section id="weekly-screen" class="screen">
+      <header class="flow-head"><button id="back-weekly" class="back-button" type="button" aria-label="戻る">‹</button><div><p class="eyebrow">WEEKLY</p><h1>週間サマリー</h1></div></header>
+      <p class="flow-intro">直近7日間の記録をもとに振り返ります。記録がない日は推測で補いません。</p>
+      <section class="card today-card"><p class="section-label">01 RECORD</p><h2>記録状況</h2><p id="weekly-record" class="today-copy"></p></section>
+      <section class="card today-card"><p class="section-label">02 LIFE & FEELING</p><h2>生活と体感の推移</h2><p id="weekly-life" class="today-copy"></p></section>
+      <section class="card today-card"><p class="section-label">03 CAMERA</p><h2>カメラ測定値</h2><p id="weekly-camera" class="today-copy"></p></section>
+      <section class="card today-card"><p class="section-label">04 INSIGHT</p><h2>今週の気づき</h2><p id="weekly-insight" class="today-copy"></p></section>
+      <section class="card today-card emphasis"><p class="section-label">05 NEXT WEEK</p><h2>来週の過ごし方</h2><p id="weekly-next" class="today-copy"></p></section>
+      <button id="share-weekly" class="primary-button" type="button">このサマリーを共有する <span aria-hidden="true">›</span></button>
+      <p id="share-weekly-status" class="time-note"></p>
+    </section>
+
+    <section id="today-screen" class="screen">
+      <header class="flow-head"><button id="back-step4" class="back-button" type="button" aria-label="戻る">‹</button><div><p class="eyebrow">TODAY</p><h1>今日のあなた</h1></div></header>
+      <p class="flow-intro">今朝の感覚と身体反応を、あなた比で見ていきます。</p><div class="today-visual-heading"><span class="today-sprout" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V11M12 15C5 15 3 10 3 5c7 0 9 4 9 10ZM12 12c0-6 4-9 9-9 0 6-3 9-9 9Z"/></svg></span><span>今日の過ごし方</span></div>
+      <section class="card today-card today-condition today-advice-row"><p class="section-label"><span class="section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0l-1 1-1-1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg></span>CONDITION</p><h2>今朝のコンディション</h2><p id="today-feeling" class="today-lead">あなたの感覚：--</p><p id="today-body" class="today-copy">身体反応を確認しています。</p><button id="detail-toggle" class="text-button" type="button">詳しい測定結果を見る</button><div id="detail-metrics" class="detail-metrics result-metric-grid" hidden><div class="result-metric"><span class="result-metric-label">心拍数 <small>HR</small></span><strong id="today-hr">--</strong><span class="result-metric-unit">bpm</span></div><div class="result-metric"><span class="result-metric-label">拍動間隔の変動 <small>RMSSD</small></span><strong id="today-rmssd">--</strong><span class="result-metric-unit">ms</span></div><div class="result-metric"><span class="result-metric-label">拍動間隔のばらつき <small>SDNN</small></span><strong id="today-sdnn">--</strong><span class="result-metric-unit">ms</span></div></div></section>
+      <section class="card today-card emphasis today-pace today-advice-row"><p class="section-label"><span class="section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="2"/><path d="m7 21 3-6 2-3 3 2 4 1M4 12l5-3 3 3m0 0-2 3m2-3 2-4 4 1"/></svg></span>TODAY'S PACE</p><h2>今日の過ごし方</h2><p id="today-guide" class="guide-copy">今朝の感覚をもとに、今日のペースを表示します。</p></section>
+      <section id="insight-card" class="card today-card" hidden><p class="section-label">INSIGHT</p><h2>気づき</h2><p id="insight-text" class="today-copy"></p></section>
+      <section id="try-card" class="card today-card" hidden><p class="section-label">ONE TRY</p><h2>次のチャレンジ</h2><p id="try-text" class="today-copy"></p><button class="secondary-button" type="button">やってみる</button></section>
+      <button id="finish-today" class="primary-button today-save-button" type="button">今日の記録を保存する <span aria-hidden="true">›</span></button>
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav" id="bottom-nav" aria-label="メインナビゲーション" hidden>
+    <button id="nav-today" class="nav-item active" type="button" aria-current="page"><span>☀︎</span>今日</button><button id="nav-history" class="nav-item" type="button"><span>⌁</span>履歴</button><button class="nav-item" type="button"><span>○</span>わたし</button>
+  </nav>
+
+<script>
+const d=new Date(),w=["日","月","火","水","木","金","土"];
+document.getElementById("today-date").textContent=`${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${w[d.getDay()]}）`;
+const home=document.getElementById("home-screen"),step1=document.getElementById("step1-screen"),step2=document.getElementById("step2-screen"),step3=document.getElementById("step3-screen"),step4=document.getElementById("step4-screen"),todayScreen=document.getElementById("today-screen"),nav=document.getElementById("bottom-nav");
+function showStep1(){home.classList.remove("active");step1.classList.add("active");nav.hidden=true;window.scrollTo(0,0)}
+function showHome(){window.stopRppgCamera?.();step1.classList.remove("active");step2.classList.remove("active");step3.classList.remove("active");step4.classList.remove("active");todayScreen.classList.remove("active");home.classList.add("active");nav.hidden=false;window.scrollTo(0,0)}
+function showStep2(){step1.classList.remove("active");step2.classList.add("active");window.scrollTo(0,0)}
+function backToStep1(){step2.classList.remove("active");step1.classList.add("active");window.scrollTo(0,0)}
+function showStep3(){step2.classList.remove("active");step3.classList.add("active");window.scrollTo(0,0)}
+function backToStep2(){step3.classList.remove("active");step2.classList.add("active");window.scrollTo(0,0)}
+function showStep4(){window.currentRPPG=null;step3.classList.remove("active");step4.classList.add("active");window.scrollTo(0,0)}
+function backToStep3(){window.stopRppgCamera?.();step4.classList.remove("active");step3.classList.add("active");window.scrollTo(0,0)}
+// Personal baseline: compare only prior valid measurements, never the current result.
+function percentile(sorted,p){
+ if(!sorted.length)return null;
+ const i=(sorted.length-1)*p,lo=Math.floor(i),hi=Math.ceil(i);
+ return sorted[lo]+(sorted[hi]-sorted[lo])*(i-lo);
+}
+function recentValid(days){
+ // Retain all raw records; use only the latest valid measurement per local calendar day for baseline.
+ const cutoff=Date.now()-days*86400000, byDay=new Map();
+ const eligible=savedRecords().filter(x=>{
+  const t=Date.parse(x.recordedAt);
+  return x.rppg?.status==="valid" && Number.isFinite(t) && t>=cutoff && t<Date.now();
+ }).sort((a,b)=>Date.parse(a.recordedAt)-Date.parse(b.recordedAt));
+ for(const x of eligible){
+  const d=new Date(x.recordedAt);
+  const day=[d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-");
+  byDay.set(day,x);
+ }
+ return [...byDay.values()];
+}
+function personalBaseline(metric,days=28){
+ const values=recentValid(days).map(x=>x.rppg[metric]).filter(x=>typeof x==="number"&&Number.isFinite(x)).sort((a,b)=>a-b);
+ if(!values.length)return {count:0};
+ return {count:values.length,p10:percentile(values,.10),p25:percentile(values,.25),median:percentile(values,.50),p75:percentile(values,.75),p90:percentile(values,.90)};
+}
+function personalPosition(value,baseline){
+ if(typeof value!=="number"||!Number.isFinite(value)||baseline.count<7)return null;
+ const v=value;
+ return v<baseline.p10?"かなり低い側":v<baseline.p25?"低い側":v<=baseline.p75?"いつもの範囲":v<baseline.p90?"高い側":"かなり高い側";
+}
+function bodyComparison(r){
+ if(!r)return "今回は身体反応の比較を行いません。";
+ const metrics=["hr","rmssd","sdnn"];
+ const stats=metrics.map(m=>({m,b:personalBaseline(m),value:r[m]}));
+ const n=Math.min(...stats.map(x=>x.b.count));
+ if(n<3)return "測定できました。記録を重ねて、あなた比を作っていきます。";
+ if(n<7)return "測定できました。あなた比の準備中です（有効記録"+n+"件）。";
+ const positions=stats.map(x=>personalPosition(x.value,x.b));
+ const outside=positions.filter(p=>p && p!=="いつもの範囲").length;
+ const prefix=n<14?"暫定的なあなた比では、":"あなた比では、";
+ const detail=outside===0?"3つの身体反応がいつもの範囲です。":outside===1?"一部の身体反応にいつもと違う動きがあります。":"複数の身体反応にいつもと違う動きがあります。";
+ return prefix+detail;
+}
+function bodyPatternForPace(r){
+ if(!r)return {kind:"unknown",persistent:false};
+ const metrics=["hr","rmssd","sdnn"];
+ const baselines=metrics.map(m=>personalBaseline(m));
+ if(baselines.some(b=>b.count<7))return {kind:"unknown",persistent:false};
+ const positions=metrics.map((m,i)=>personalPosition(r[m],baselines[i]));
+ if(positions.some(p=>p===null))return {kind:"unknown",persistent:false};
+ const outside=positions.filter(p=>p!=="いつもの範囲").length;
+ const directions=positions.filter(p=>p!=="いつもの範囲").map(p=>p.includes("低い")?"low":"high");
+ const kind=outside===0?"stable":directions.includes("low")&&directions.includes("high")?"mixed":outside===1?"single":"multiple";
+ // Persistence requires at least three valid measurements in the last seven days.
+ const week=recentValid(7);
+ let changed=0;
+ if(week.length>=3){
+  for(const x of week){
+   const count=metrics.filter((m,i)=>{
+    const p=personalPosition(x.rppg[m],baselines[i]);
+    return p!==null&&p!=="いつもの範囲";
+   }).length;
+   if(count>=2)changed++;
+  }
+ }
+ return {kind,persistent:week.length>=3&&changed>=3};
+}
+function todayDirection(feeling,body){
+ const kind=body.kind,persistent=body.persistent;
+ if(feeling==="良くない")return "C";
+ if(feeling==="あまり良くない")return kind==="stable"||kind==="unknown"?"B":"C";
+ if(feeling==="普通"){
+  if(kind==="stable"||kind==="unknown")return "A";
+  return (kind==="multiple"||kind==="mixed")&&persistent?"C":"B";
+ }
+ return "A";
+}
+function renderToday(){
+ const feeling=selectedValue("morning-condition")||"未入力";
+ const r=window.currentRPPG||null;
+ document.getElementById("today-feeling").textContent="あなたの感覚："+feeling;
+ document.getElementById("today-body").textContent=bodyComparison(r);
+ for(const [key,id] of [["hr","today-hr"],["rmssd","today-rmssd"],["sdnn","today-sdnn"]]){
+  document.getElementById(id).textContent=r?.[key]??"--";
+ }
+ const direction=todayDirection(feeling,bodyPatternForPace(r));
+ window.currentTodaySnapshot={body:bodyComparison(r),pattern:bodyPatternForPace(r),baselines:Object.fromEntries(["hr","rmssd","sdnn"].map(m=>[m,{recent7:personalBaseline(m,7),recent28:personalBaseline(m,28),position:r?personalPosition(r[m],personalBaseline(m,28)):null}])),direction};
+ const messages={
+  A:"今日は、いつも通りで。今朝の感覚を大切にしながら、普段のペースで過ごしてみましょう。",
+  B:"今日は、少し動くところから。朝のうちは軽く身体を動かし、その後の感じを見ながらペースを決めてみましょう。",
+  C:"今日は、少し余白を。予定を詰め込みすぎず、いつもより少し余裕を持って過ごしてみましょう。"
+ };
+ const strong=selectedValue("strong-symptom")==="ある";
+ document.getElementById("today-guide").textContent=strong
+  ?messages.C+" いつもと違う強い不調がある場合は、必要に応じて医療機関への相談をご検討ください。"
+  :messages[direction];
+}
+document.getElementById("detail-toggle").addEventListener("click",()=>{
+ const box=document.getElementById("detail-metrics");
+ box.hidden=!box.hidden;
+});
+// Test mode uses a completely separate storage key. Never mix test records with user records.
+const IS_ISOLATED_TEST=new URLSearchParams(location.search).get("isolatedTest")==="1";
+const STORAGE_KEY=IS_ISOLATED_TEST?"__sleepConditionIsolatedAppTest__":"sleepConditionAppV01";
+if(IS_ISOLATED_TEST){
+ const savePanel=document.getElementById("isolated-save-failure");
+ savePanel.hidden=false;
+ document.getElementById("arm-save-failure").addEventListener("click",()=>{
+  simulateSaveFailureOnce=true;
+  document.getElementById("save-failure-arm-status").textContent="設定済み：次の保存操作だけ失敗します。";
+ });
+ const banner=document.createElement("div");
+ banner.textContent="検証モード｜架空の入力専用・通常の保存記録とは分離";
+ banner.style.cssText="position:sticky;top:0;z-index:9999;background:#fff1c8;color:#403000;padding:12px;text-align:center;font-weight:bold";
+ document.body.prepend(banner);
+}
+if(IS_ISOLATED_TEST){
+ const panel=document.getElementById("isolated-record-check");
+ panel.hidden=false;
+ document.getElementById("inspect-isolated-record").addEventListener("click",()=>{
+  const list=savedRecords();
+  const last=list[list.length-1];
+  const output=document.getElementById("isolated-record-output");
+  if(!last){output.textContent="検証用の保存記録はありません。";return}
+  const fmt=x=>x===null||x===undefined||x===""?"未入力":String(x);
+  output.textContent=[
+   "検証用の保存件数："+list.length+"件",
+   "保存日時："+fmt(last.recordedAt),
+   "昨日の主な過ごし方："+fmt(last.yesterday?.mainActivity),
+   "昨夜の睡眠："+fmt(last.sleep?.feeling),
+   "就床時刻："+fmt(last.sleep?.timeInBed),
+   "起床時刻："+fmt(last.sleep?.wakeTime),
+   "寝室温度："+fmt(last.bedroom?.temperature?.value),
+   "寝室湿度："+fmt(last.bedroom?.humidity?.value),
+   "寝室CO₂："+fmt(last.bedroom?.co2?.value),
+   "今朝の感覚："+fmt(last.morning?.condition),
+   "rPPG保存状態："+fmt(last.rppg?.status),
+   "活動の目安："+fmt(last.output?.todayGuide)
+  ].join("\n");
+ });
+}
+// Mode-aware backup and guarded merge restore; storage remains separated by STORAGE_KEY.
+{
+ const panel=document.getElementById("isolated-backup");panel.hidden=false;
+ const backupMode=IS_ISOLATED_TEST?"isolated-test":"normal";
+ const status=document.getElementById("test-backup-status");
+ const readOriginal=()=>{
+  const raw=localStorage.getItem(STORAGE_KEY);
+  const records=raw===null?[]:JSON.parse(raw);
+  if(!Array.isArray(records))throw Error("現在の記録形式を確認できません。");
+  if(!records.every(x=>x&&typeof x==="object"&&!Array.isArray(x)&&typeof x.id==="string"&&x.id&&typeof x.recordedAt==="string"&&!Number.isNaN(Date.parse(x.recordedAt))))throw Error("現在の記録に不正なデータがあります。");
+  if(new Set(records.map(x=>x.id)).size!==records.length)throw Error("現在の記録IDが重複しています。");
+  return records;
+ };
+ document.getElementById("test-export").addEventListener("click",()=>{
+  try{
+   const records=readOriginal();
+   const data={format:"loopal-sleep-backup",formatVersion:1,mode:backupMode,exportedAt:new Date().toISOString(),records};
+   const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+   const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=(IS_ISOLATED_TEST?"loopal-test-backup-":"loopal-backup-")+new Date().toISOString().slice(0,10)+".json";document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+   status.textContent="記録"+records.length+"件のバックアップを作成しました。ファイルアプリなど安全な場所に保存してください。";
+  }catch(e){status.textContent="書き出しを中止しました："+e.message}
+ });
+ document.getElementById("test-import").addEventListener("click",async()=>{
+  const file=document.getElementById("test-import-file").files?.[0];if(!file){status.textContent="JSONファイルを選んでください。";return}
+  try{
+   if(file.size>10*1024*1024)throw Error("ファイルが大きすぎます（上限10MB）。");
+   const data=JSON.parse(await file.text());
+   if(!data||data.format!=="loopal-sleep-backup"||data.formatVersion!==1||data.mode!==backupMode||!Array.isArray(data.records))throw Error("この検証モードに対応したバックアップではありません。");
+   const incoming=data.records;
+   if(!incoming.every(x=>x&&typeof x==="object"&&!Array.isArray(x)&&typeof x.id==="string"&&x.id&&typeof x.recordedAt==="string"&&!Number.isNaN(Date.parse(x.recordedAt))&&x.schemaVersion==="0.1"&&x.yesterday&&typeof x.yesterday==="object"&&x.sleep&&typeof x.sleep==="object"&&x.morning&&typeof x.morning==="object"&&x.output&&typeof x.output==="object"))throw Error("記録の内容または形式に問題があります。");
+   if(new Set(incoming.map(x=>x.id)).size!==incoming.length)throw Error("バックアップ内に同じ記録IDが複数あります。");
+   const existing=readOriginal(),ids=new Set(existing.map(x=>x.id)),add=incoming.filter(x=>!ids.has(x.id));
+   status.textContent="現在："+existing.length+"件／取込："+incoming.length+"件／重複："+(incoming.length-add.length)+"件／追加予定："+add.length+"件";
+   if(!add.length){status.textContent+="。追加する記録はありません。";return}
+   if(!confirm(status.textContent+"。既存記録を変更せず、追加分だけ復元しますか？")){status.textContent+="。復元を中止しました。";return}
+   // Recheck against concurrent modifications before writing.
+   const current=readOriginal();if(JSON.stringify(current)!==JSON.stringify(existing))throw Error("確認中に記録が変更されました。もう一度お試しください。");
+   const merged=current.concat(add);localStorage.setItem(STORAGE_KEY,JSON.stringify(merged));
+   const verified=readOriginal();if(verified.length!==merged.length||!add.every(x=>verified.some(y=>y.id===x.id)))throw Error("書き込み後の確認に失敗しました。");
+   document.getElementById("saved-count").textContent=verified.length;
+   document.getElementById("valid-count").textContent=verified.filter(x=>x.rppg?.status==="valid").length;
+   status.textContent="復元完了：追加"+add.length+"件／合計"+verified.length+"件。";
+  }catch(e){status.textContent="復元していません／確認が必要です："+e.message}
+ });
+}
+let simulateSaveFailureOnce=false;
+let previewRecords=null;
+function savedRecords(){
+ if(IS_ISOLATED_TEST && previewRecords)return previewRecords;
+ try{const a=JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]");return Array.isArray(a)?a:[]}catch{return []}
+}
+function selectedValue(group){
+ return document.querySelector('[data-group="'+group+'"] .selected')?.textContent.trim()||null;
+}
+function optionalNumber(id){
+ const el=document.getElementById(id);
+ return el.value.trim()===""?null:Number(el.value);
+}
+function finishToday(){
+ if(IS_ISOLATED_TEST && previewRecords){alert("架空データの表示中は保存できません。再読み込みして通常の検証入力から記録してください。");return}
+ const feeling=selectedValue("morning-condition");
+ if(!feeling){alert("今朝の感覚が確認できません。");return}
+ const r=window.currentRPPG||null;
+ const date=new Date();
+ const records=savedRecords();
+ const entry={
+  schemaVersion:"0.1",algorithmVersion:"today-direction-1",
+  id:date.toISOString(),recordedAt:date.toISOString(),
+  yesterday:{mainActivity:selectedValue("activity"),unusual:[...document.querySelectorAll('[data-group="unusual"] .selected')].map(x=>x.textContent.trim())},
+  sleep:{feeling:selectedValue("sleep"),timeInBed:document.getElementById("bed-time").value,wakeTime:document.getElementById("wake-time").value},
+  bedroom:{temperature:{value:optionalNumber("room-temp"),source:"manual"},humidity:{value:optionalNumber("room-humidity"),source:"manual"},co2:{value:optionalNumber("room-co2"),source:"manual"}},
+  morning:{condition:feeling,feelingTag:selectedValue("morning-feeling"),strongSymptom:selectedValue("strong-symptom")},
+  rppg:r?{hr:r.hr,meanPPI:r.meanPPI,rmssd:r.rmssd,sdnn:r.sdnn,acceptedPpi:r.acceptedPpi,rejectedPpi:r.rejectedPpi,quality:r.quality,frequencyPeak:r.frequencyPeak,status:r.quality==="良好"?"valid":"reference"}:{status:"missing"},
+  output:{conditionText:document.getElementById("today-body").textContent,todayGuide:document.getElementById("today-guide").textContent,comparisonSnapshot:window.currentTodaySnapshot||null}
+ };
+ try{
+  if(IS_ISOLATED_TEST && simulateSaveFailureOnce){
+   simulateSaveFailureOnce=false;
+   document.getElementById("save-failure-arm-status").textContent="保存失敗を再現済み。次回は通常保存できます。";
+   throw Error("検証用の保存失敗");
+  }
+  records.push(entry);
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(records));
+  if(!savedRecords().some(x=>x.id===entry.id))throw Error("保存確認失敗");
+ }catch(e){alert("記録を保存できませんでした。入力内容はこの画面に残っています。もう一度保存してください。再度失敗する場合は、画面を閉じずにお知らせください。");return}
+ document.getElementById("saved-count").textContent=savedRecords().length;
+ document.getElementById("valid-count").textContent=savedRecords().filter(x=>x.rppg?.status==="valid").length;
+ document.getElementById("start-record").textContent="今日の結果を見る";
+ document.getElementById("start-record").onclick=()=>{document.getElementById("start-record").onclick=null;showToday()};
+ showHome();
+}
+function hideMainScreens(){[home,step1,step2,step3,step4,todayScreen,document.getElementById("history-screen"),document.getElementById("weekly-screen")].forEach(x=>x?.classList.remove("active"))}
+function formatRecordDate(x){const d=new Date(x);return Number.isNaN(d.getTime())?"日時不明":`${d.getMonth()+1}月${d.getDate()}日`}
+function showHistory(){
+ window.stopRppgCamera?.();hideMainScreens();document.getElementById("history-screen").classList.add("active");nav.hidden=false;
+ const records=[...savedRecords()].sort((a,b)=>Date.parse(b.recordedAt)-Date.parse(a.recordedAt));
+ const box=document.getElementById("history-list");
+ if(!records.length){box.innerHTML='<p class="today-copy">まだ保存された記録はありません。</p>'}
+ else box.innerHTML=records.map(x=>{const m=x.morning?.condition||"未記録",s=x.sleep?.feeling||"未記録",r=x.rppg?.status==="valid"?`HR ${Math.round(x.rppg.hr)} / RMSSD ${Math.round(x.rppg.rmssd)} / SDNN ${Math.round(x.rppg.sdnn)}`:"測定なし・参考値";return `<div style="padding:12px 0;border-bottom:1px solid #eee"><strong>${formatRecordDate(x.recordedAt)}</strong><p class="today-copy">睡眠：${s}<br>今朝：${m}<br>カメラ：${r}</p></div>`}).join("");
+ window.scrollTo(0,0);
+}
+function weeklyData(){
+ const now=Date.now(),cut=now-7*86400000;
+ return savedRecords().filter(x=>{const t=Date.parse(x.recordedAt);return Number.isFinite(t)&&t>=cut&&t<=now}).sort((a,b)=>Date.parse(a.recordedAt)-Date.parse(b.recordedAt));
+}
+function weeklySummaryText(){
+ const a=weeklyData(),valid=a.filter(x=>x.rppg?.status==="valid");
+ const feelings=a.map(x=>x.morning?.condition).filter(Boolean),sleeps=a.map(x=>x.sleep?.feeling).filter(Boolean),acts=a.map(x=>x.yesterday?.mainActivity).filter(Boolean);
+ const avg=k=>valid.length?Math.round(valid.reduce((n,x)=>n+(Number(x.rppg?.[k])||0),0)/valid.length):null;
+ const first=feelings[0],last=feelings.at(-1);
+ const record=`${a.length}日記録 / カメラ測定（有効）${valid.length}日。記録のない日は補完していません。`;
+ const life=a.length?`睡眠の記録 ${sleeps.length}日、本人感覚 ${feelings.length}日、活動 ${acts.length}日。今朝の感覚は「${first||"未記録"}」から「${last||"未記録"}」です。`:"この7日間の記録はありません。";
+ const camera=valid.length?`有効測定${valid.length}日。平均 HR ${avg("hr")} bpm / RMSSD ${avg("rmssd")} ms / SDNN ${avg("sdnn")} ms。本人内比較は、記録が蓄積した範囲で確認します。`:"有効なカメラ測定がないため、測定値の推移は表示しません。";
+ let insight="まだ十分な記録がありません。記録を続けることで、生活と体感の関係を振り返りやすくなります。";
+ if(a.length>=4) insight=first===last?`本人感覚は週の初めと直近で「${last}」でした。睡眠や活動と合わせて、同じ感覚の日の条件を見比べてみましょう。`:`本人感覚は週の初めの「${first}」から、直近は「${last}」でした。睡眠・活動の記録と一緒に変化した条件を確認してみましょう。`;
+ const next=a.length>=4?"今週の記録で調子がよかった日の睡眠や活動を一つ選び、来週も無理なく再現できる条件を試してみましょう。":"まずは無理のない範囲で朝の記録を続け、あなた自身の比較材料を増やしていきましょう。";
+ return {record,life,camera,insight,next};
+}
+function renderWeekly(){const x=weeklySummaryText();document.getElementById("weekly-record").textContent=x.record;document.getElementById("weekly-life").textContent=x.life;document.getElementById("weekly-camera").textContent=x.camera;document.getElementById("weekly-insight").textContent=x.insight;document.getElementById("weekly-next").textContent=x.next}
+function showWeekly(){hideMainScreens();document.getElementById("weekly-screen").classList.add("active");nav.hidden=false;renderWeekly();window.scrollTo(0,0)}
+function weeklyShareText(){const x=weeklySummaryText();return ["朝のコンディション｜週間サマリー","① 記録状況\n"+x.record,"② 生活と体感の推移\n"+x.life,"③ カメラ測定値\n"+x.camera,"④ 今週の気づき\n"+x.insight,"⑤ 来週の過ごし方\n"+x.next].join("\n\n")}
+async function shareWeekly(){const text=weeklyShareText(),status=document.getElementById("share-weekly-status");try{if(navigator.share){await navigator.share({title:"朝のコンディション｜週間サマリー",text});status.textContent="共有先の選択は端末側で行います。"}else if(navigator.clipboard){await navigator.clipboard.writeText(text);status.textContent="サマリーをコピーしました。メールやLINEに貼り付けて共有できます。"}else{status.textContent="この環境では共有機能を利用できません。"}}catch(e){if(e?.name!=="AbortError")status.textContent="共有を開始できませんでした。もう一度お試しください。"}}
+document.getElementById("nav-history").addEventListener("click",showHistory);
+document.getElementById("nav-today").addEventListener("click",showHome);
+document.getElementById("back-history").addEventListener("click",showHome);
+document.getElementById("open-weekly").addEventListener("click",showWeekly);
+document.getElementById("back-weekly").addEventListener("click",showHistory);
+document.getElementById("share-weekly").addEventListener("click",shareWeekly);
+document.getElementById("finish-today").addEventListener("click",finishToday);
+document.getElementById("saved-count").textContent=savedRecords().length;
+ document.getElementById("valid-count").textContent=savedRecords().filter(x=>x.rppg?.status==="valid").length;
+if(IS_ISOLATED_TEST){
+ const failure=document.getElementById("simulate-measure-failure");failure.hidden=false;
+ failure.addEventListener("click",()=>{
+  window.stopRppgCamera?.();
+  window.currentRPPG=null;
+  document.getElementById("rppg-result").hidden=true;
+  document.getElementById("rppg-countdown").textContent="";
+  document.getElementById("camera-status").textContent="測定に必要なデータを取得できませんでした。もう一度測定するか、「測定せずに進む」を選んでください。";
+  const selected=document.querySelector('[data-group="morning-condition"] .selected');
+  document.getElementById("camera-status").dataset.inputPreserved=selected?.textContent.trim()||"";
+ });
+ const denial=document.getElementById("simulate-camera-denial");denial.hidden=false;document.getElementById("camera-test-controls").hidden=false;
+ denial.addEventListener("click",()=>{
+  window.stopRppgCamera?.();
+  document.getElementById("camera-status").textContent="カメラを使用できません。ブラウザのカメラ許可を確認するか、「測定せずに進む」を選んでください。";
+  document.getElementById("measure-start").disabled=true;
+  document.getElementById("camera-start").disabled=false;
+ });
+}
+if(IS_ISOLATED_TEST){
+ document.getElementById("isolated-pace-preview").hidden=false;
+ const cases={a:{hr:70,rmssd:40,sdnn:50},b:{hr:90,rmssd:40,sdnn:50},c:{hr:90,rmssd:60,sdnn:70}};
+ for(const type of ["a","b","c"])document.getElementById("preview-pace-"+type).addEventListener("click",()=>{
+  const d=new Date();d.setHours(12,0,0,0);
+  previewRecords=Array.from({length:14},(_,i)=>{
+   const date=new Date(d);date.setDate(date.getDate()-i-1);
+   const changed=type==="c" && i<3;
+   return {recordedAt:date.toISOString(),rppg:{status:"valid",hr:changed?90:70,rmssd:changed?60:40,sdnn:changed?70:50}};
+  });
+  document.querySelectorAll('[data-group="morning-condition"] button').forEach(x=>x.classList.toggle("selected",x.textContent.trim()==="普通"));
+  window.currentRPPG=cases[type];
+  document.getElementById("home-screen").classList.remove("active");
+  document.getElementById("step4-screen").classList.add("active");
+  showToday();
+  document.getElementById("finish-today").hidden=true;
+  let note=document.getElementById("preview-notice");if(!note){note=document.createElement("p");note.id="preview-notice";note.className="helper";document.getElementById("today-screen").append(note)}
+  note.textContent="検証用プレビュー：活動目安"+type.toUpperCase()+"｜保存不可。終了するにはページを再読み込みしてください。";
+ });
+}
+if(IS_ISOLATED_TEST){
+ document.getElementById("isolated-preview").hidden=false;
+ for(const count of [7,14])document.getElementById("preview-"+count).addEventListener("click",()=>{
+  const d=new Date();d.setHours(12,0,0,0);
+  previewRecords=Array.from({length:count},(_,i)=>{const date=new Date(d);date.setDate(date.getDate()-i-1);return {recordedAt:date.toISOString(),rppg:{status:"valid",hr:70,rmssd:40,sdnn:50}}});
+  document.querySelectorAll('[data-group="morning-condition"] button').forEach(x=>x.classList.toggle("selected",x.textContent.trim()==="普通"));
+  window.currentRPPG={hr:70,rmssd:40,sdnn:50};
+  document.getElementById("home-screen").classList.remove("active");
+  document.getElementById("step4-screen").classList.add("active");
+  showToday();
+  document.getElementById("finish-today").hidden=true;
+  let note=document.getElementById("preview-notice");if(!note){note=document.createElement("p");note.id="preview-notice";note.className="helper";document.getElementById("today-screen").append(note)}
+  note.textContent="検証用プレビュー（架空の"+count+"日分）｜保存不可。終了するにはページを再読み込みしてください。";
+ });
+}
+function showToday(){window.stopRppgCamera?.();step4.classList.remove("active");todayScreen.classList.add("active");renderToday();window.scrollTo(0,0)}
+function backToStep4(){todayScreen.classList.remove("active");step4.classList.add("active");window.scrollTo(0,0)}
+document.getElementById("start-record").addEventListener("click",showStep1);document.getElementById("back-home").addEventListener("click",showHome);document.querySelector(".next-button").addEventListener("click",showStep2);document.getElementById("back-step1").addEventListener("click",backToStep1);document.getElementById("to-step3").addEventListener("click",showStep3);document.getElementById("back-step2").addEventListener("click",backToStep2);document.getElementById("to-step4").addEventListener("click",showStep4);document.getElementById("back-step3").addEventListener("click",backToStep3);document.getElementById("show-today").addEventListener("click",showToday);document.getElementById("skip-measurement").addEventListener("click",()=>{window.currentRPPG=null;showToday()});document.getElementById("back-step4").addEventListener("click",backToStep4);
+document.querySelectorAll(".choice-grid.single").forEach(g=>g.addEventListener("click",e=>{const button=e.target.closest("button");if(!button||!g.contains(button))return;g.querySelectorAll("button").forEach(b=>b.classList.remove("selected"));button.classList.add("selected");checkReady()}));
+document.querySelectorAll(".choice-grid.multi").forEach(g=>g.addEventListener("click",e=>{const button=e.target.closest("button");if(!button||!g.contains(button))return;const b=button;if(b.dataset.none){g.querySelectorAll("button").forEach(x=>x.classList.remove("selected"));b.classList.add("selected")}else{g.querySelector("[data-none]").classList.remove("selected");b.classList.toggle("selected")}checkReady()}));
+document.querySelectorAll('input[type="time"]').forEach(i=>i.addEventListener("change",checkReady));
+function checkReady(){const ok=["activity","sleep"].every(n=>document.querySelector('[data-group="'+n+'"] .selected'))&&document.getElementById("bed-time").value&&document.getElementById("wake-time").value;document.querySelector(".next-button").disabled=!ok}
+
+const morningGroup=document.querySelector('[data-group="morning-condition"]');
+const safetyGate=document.getElementById("safety-gate");
+const step4Button=document.getElementById("to-step4");
+function updateMorningGate(){
+  const c=morningGroup.querySelector(".selected");
+  const poor=!!(c&&c.dataset.poor);
+  safetyGate.hidden=!poor;
+  if(!poor) document.querySelectorAll('[data-group="strong-symptom"] button').forEach(b=>b.classList.remove("selected"));
+  step4Button.disabled=!(c&&(!poor||document.querySelector('[data-group="strong-symptom"] .selected')));
+}
+morningGroup.addEventListener("click",()=>setTimeout(updateMorningGate,0));
+document.querySelector('[data-group="strong-symptom"]').addEventListener("click",()=>setTimeout(updateMorningGate,0));
+</script>
+<script>
+// rPPG camera controller
+const video=document.getElementById("rppg-video"),wrap=document.getElementById("rppg-video-wrap"),roi=document.getElementById("rppg-roi"),canvas=document.getElementById("rppg-source"),ctx=canvas?.getContext("2d",{willReadFrequently:true}),cameraBtn=document.getElementById("camera-start"),measureBtn=document.getElementById("measure-start"),camStatus=document.getElementById("camera-status"),countdown=document.getElementById("rppg-countdown");
+let rSamples=[],gSamples=[],bSamples=[],sampleTimes=[],measuring=false,startAt=0,fallback=null;
+let cameraGeneration=0,measureTimer=null,measureCountdown=null;
+function stopRppgCamera(){
+ cameraGeneration++;
+ measuring=false;
+ if(measureTimer!==null){clearTimeout(measureTimer);measureTimer=null}
+ if(measureCountdown!==null){clearInterval(measureCountdown);measureCountdown=null}
+ const stream=video.srcObject;
+ if(stream?.getTracks)stream.getTracks().forEach(track=>track.stop());
+ video.srcObject=null;
+ wrap.hidden=true;
+ cameraBtn.disabled=false;
+ cameraBtn.textContent="カメラを起動";
+ measureBtn.disabled=true;
+ countdown.textContent="";
+}
+window.stopRppgCamera=stopRppgCamera;
+async function startCamera(){
+ const generation=++cameraGeneration;
+ cameraBtn.disabled=true;
+ try{
+  if(!navigator.mediaDevices?.getUserMedia)throw new Error("camera_api_unavailable");
+  camStatus.textContent="カメラを起動しています…";
+  const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user",frameRate:{ideal:30}},audio:false});
+  if(generation!==cameraGeneration || !document.getElementById("step4-screen").classList.contains("active")){stream.getTracks().forEach(t=>t.stop());return}
+  video.srcObject=stream;
+  wrap.hidden=false;
+  cameraBtn.disabled=true;
+  cameraBtn.textContent="カメラ起動済み";
+  video.addEventListener("loadedmetadata",()=>{
+    if(generation!==cameraGeneration)return;
+    canvas.width=video.videoWidth;
+    canvas.height=video.videoHeight;
+    camStatus.textContent="白い枠を額中央へ合わせてください。";
+    measureBtn.disabled=false;
+  },{once:true});
+ }catch(e){if(generation!==cameraGeneration)return;cameraBtn.disabled=false;camStatus.textContent="カメラを使用できません。ブラウザのカメラ許可を確認するか、「測定せずに進む」を選んでください。";console.error(e)}
+}
+cameraBtn?.addEventListener("click",startCamera);
+function rgbSample(){
+ if(!video||video.readyState<2||!video.videoWidth)return null;
+ ctx.drawImage(video,0,0,canvas.width,canvas.height);
+ const vr=video.getBoundingClientRect(),rr=roi.getBoundingClientRect(),dx=(rr.left-vr.left)/vr.width,dy=(rr.top-vr.top)/vr.height,dw=rr.width/vr.width,dh=rr.height/vr.height;
+ const sx=1-dx-dw,x=Math.max(0,Math.floor(sx*canvas.width)),y=Math.max(0,Math.floor(dy*canvas.height)),w=Math.min(Math.floor(dw*canvas.width),canvas.width-x),h=Math.min(Math.floor(dh*canvas.height),canvas.height-y);
+ if(w<=0||h<=0)return null;const d=ctx.getImageData(x,y,w,h).data;let r=0,g=0,b=0,n=0;
+ for(let i=0;i<d.length;i+=16){r+=d[i];g+=d[i+1];b+=d[i+2];n++}return n?{r:r/n,g:g/n,b:b/n}:null;
+}
+function collect(){
+ if(!measuring)return;const v=rgbSample();if(v){rSamples.push(v.r);gSamples.push(v.g);bSamples.push(v.b);sampleTimes.push(performance.now()-startAt)}
+ if(measuring)requestAnimationFrame(collect);
+}
+measureBtn?.addEventListener("click",()=>{
+ if(measuring||!video.srcObject)return;
+ const generation=cameraGeneration;
+ window.currentRPPG=null;
+ document.getElementById("rppg-result").hidden=true;
+ measuring=true;measureBtn.disabled=true;rSamples=[];gSamples=[];bSamples=[];sampleTimes=[];startAt=performance.now();let sec=20;countdown.textContent=sec+" 秒";collect();
+ measureCountdown=setInterval(()=>{if(generation!==cameraGeneration)return;sec--;countdown.textContent=sec>0?sec+" 秒":"測定完了";if(sec<=0){clearInterval(measureCountdown);measureCountdown=null}},1000);
+ measureTimer=setTimeout(()=>{if(generation!==cameraGeneration)return;measureTimer=null;measuring=false;measureBtn.disabled=false;try{const out=window.RPPGEngine.analyze(rSamples,gSamples,bSamples,sampleTimes);window.currentRPPG=out;document.getElementById("rppg-hr").textContent=out.hr;document.getElementById("rppg-rmssd").textContent=out.rmssd??"--";document.getElementById("rppg-sdnn").textContent=out.sdnn??"--";document.getElementById("rppg-quality").textContent="測定品質："+out.quality;document.getElementById("rppg-result").hidden=false;camStatus.textContent="測定が完了しました。"}catch(e){camStatus.textContent="測定に必要なデータを取得できませんでした。もう一度測定するか、「測定せずに進む」を選んでください。";console.error(e)}},20000)
+});
+</script>
+</body></html>
