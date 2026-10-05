@@ -75,7 +75,6 @@ html,body{background:#f5faff;color:var(--ink)}
 .data-card{padding:24px 20px}.data-heading h2{font-size:21px}.data-number{font-size:46px;color:#082d69}.data-row p{font-size:14px}.data-row .helper{font-size:13px}.data-message{font-size:13px!important}
 .eyebrow,.section-label{font-size:12px;letter-spacing:.08em;color:#437aa5}.helper,.time-note,.env-note{font-size:13px}.flow-head h1{color:#102c62}.flow-head{border-bottom:3px solid rgba(39,139,223,.12);margin-bottom:14px}.step-count{color:#157ed3;font-size:14px}.form-card h2{font-size:20px}.choice-grid button{min-height:49px;font-size:14px}.choice-grid button.selected{border:2px solid #258be1;background:#e8f4ff;color:#104b8e}.back-button{color:#096bc3}.flow-intro{font-size:15px}.rppg-countdown{color:#0873ce}.today-lead,.guide-copy{color:#103a75}.emphasis{background:rgba(232,247,255,.96)}
 /* Phase A has no implemented history/profile screens. Keep inactive nav hidden. */
-.bottom-nav{display:none!important}
 @media(max-width:380px){.home-hero-title{font-size:28px}.data-row{gap:8px}.data-message{font-size:12px!important}.record-card .primary-button{font-size:19px}}
 
 /* HOME visual refinement after desktop screenshot review */
